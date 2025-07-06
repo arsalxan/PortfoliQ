@@ -64,14 +64,10 @@ router.post('/login', passport.authenticate('local', {
 
 // Logout
 router.get('/logout', (req, res, next) => {
-  req.logout(function (err) {
+  req.logout(function(err) {
     if (err) { return next(err); }
-    req.session.destroy(function (err) {
-      if (err) { return next(err); }
-      res.clearCookie('connect.sid'); // Clear the session cookie
-      req.flash('success', 'Goodbye!');
-      res.redirect('/portfolios');
-    });
+    req.flash('success', 'Goodbye!');
+    res.redirect('/portfolios');
   });
 });
 
