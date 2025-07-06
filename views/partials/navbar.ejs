@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+  <a class="navbar-brand ms-3" href="/">
+    <img src="/images/logo.svg" alt="Logo" height="30" class="d-inline-block align-text-top me-2">
+    <span class="align-middle">PortfoliQ</span>
+  </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ms-auto">
+      <% if (currentUser) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/portfolios">Portfolios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/portfolios/new">Add Portfolio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+      <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+</nav>

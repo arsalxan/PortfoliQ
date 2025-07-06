@@ -1,0 +1,43 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-card p-4">
+                <div class="auth-card-bg" style="background-image: url('/images/user.svg');"></div>
+                <h1 class="mb-4 text-center">Edit Profile</h1>
+                <form action="/profile?_method=PUT" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" id="username" class="form-control" value="<%= user.username %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" name="fullName" id="fullName" class="form-control" value="<%= user.fullName || '' %>">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <label for="dp" class="profile-dp-upload-area d-inline-block position-relative">
+                            <% if (user.dp) { %>
+                                <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle profile-dp-preview">
+                            <% } else { %>
+                                <i class="fas fa-user-circle fa-7x text-secondary profile-dp-preview"></i>
+                            <% } %>
+                            <div class="profile-dp-overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
+                                <i class="fas fa-plus fa-2x text-white"></i>
+                            </div>
+                        </label>
+                        <input type="file" name="dp" id="dp" class="d-none" accept="image/*">
+                        <% if (user.dp) { %>
+                            <small class="form-text text-muted d-block mt-2">Click DP to change. Current DP: <a href="<%= user.dp %>" target="_blank">View</a></small>
+                        <% } else { %>
+                            <small class="form-text text-muted d-block mt-2">Click icon to upload DP.</small>
+                        <% } %>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Update Profile <i class="fas fa-save ms-2"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

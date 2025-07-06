@@ -1,0 +1,58 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Your Dashboard</h1>
+
+    <div class="mb-5">
+        <h2>My Portfolios</h2>
+        <% if (portfolios.length) { %>
+        <div class="row">
+            <% portfolios.forEach(portfolio => { %>
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><%= portfolio.url %></h5>
+                        <p class="card-text text-secondary"><%= portfolio.description.substring(0, 100) %>...</p>
+                        <div class="mt-auto">
+                            <a href="/portfolios/<%= portfolio._id %>" class="btn btn-primary btn-sm">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <div class="alert alert-info" role="alert">
+            You haven't submitted any portfolios yet. <a href="/portfolios/new" class="alert-link">Submit your first portfolio!</a>
+        </div>
+        <% } %>
+    </div>
+
+    <div>
+        <h2>Feedback I've Given</h2>
+        <% if (feedbacks.length) { %>
+        <div class="row">
+            <% feedbacks.forEach(feedback => { %>
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Feedback on a Portfolio</h5>
+                        <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design.substring(0, 100) %>...</p><% } %>
+                        <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness.substring(0, 100) %>...</p><% } %>
+                        <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content.substring(0, 100) %>...</p><% } %>
+                        <% if (feedback.ux_flow) { %><p class="card-text"><strong>UX Flow:</strong> <%= feedback.ux_flow.substring(0, 100) %>...</p><% } %>
+                        <% if (feedback.accessibility) { %><p class="card-text"><strong>Accessibility:</strong> <%= feedback.accessibility.substring(0, 100) %>...</p><% } %>
+                        <% if (feedback.technical_performance) { %><p class="card-text"><strong>Technical Performance:</strong> <%= feedback.technical_performance.substring(0, 100) %>...</p><% } %>
+                        <p class="card-text text-secondary"><em>Given by you</em></p>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <div class="alert alert-info" role="alert">
+            You haven't given any feedback yet. <a href="/portfolios" class="alert-link">Browse portfolios to give feedback!</a>
+        </div>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PortfoliQ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="text-dark">
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+  <main class="flex-grow-1">
+    <%- body %>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      'use strict'
+      const forms = document.querySelectorAll('.needs-validation')
+
+      forms.forEach(function (form) {
+        const textareas = form.querySelectorAll('textarea[name^="feedback["]');
+
+        textareas.forEach(function(textarea) {
+          textarea.addEventListener('input', function() {
+            const feedbackLength = this.value.trim().length;
+            if (feedbackLength > 0 && feedbackLength < 20) {
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else if (feedbackLength >= 20) {
+              this.classList.add('is-valid');
+              this.classList.remove('is-invalid');
+            } else {
+              this.classList.remove('is-valid', 'is-invalid');
+            }
+          });
+        });
+
+        form.addEventListener('submit', function (event) {
+          let oneFieldValid = false;
+
+          textareas.forEach(function(textarea) {
+            if (textarea.value.trim().length >= 20) {
+              oneFieldValid = true;
+            }
+          });
+
+          if (!oneFieldValid) {
+            event.preventDefault();
+            event.stopPropagation();
+            textareas.forEach(function(textarea) {
+              if (textarea.value.trim().length === 0) {
+                textarea.classList.add('is-invalid');
+              }
+            });
+          }
+
+          form.classList.add('was-validated');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

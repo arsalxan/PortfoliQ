@@ -1,0 +1,495 @@
+:root {
+    --background:        #F0F0F0;   /* darker greyish white */
+    --surface:           #FFFFFF;   /* white cards and forms */
+    --primary:           #0A66C2;   /* LinkedIn blue for buttons */
+    --primary-hover:     #004182;   /* darker blue for hover */
+    --secondary:         #60A5FA;   /* secondary accents: soft sky blue (not explicitly used in this design, but kept for consistency) */
+    --text-primary:      #191919;   /* almost black */
+    --text-secondary:    #5E5E5E;   /* muted dark gray */
+    --border:            #DDDDDD;   /* light gray borders */
+    --success:           #48BB78;   /* success: green */
+    --error:             #F56565;   /* error: red */
+    --warning:           #ED8936;   /* warning: muted orange */
+
+    /* Bootstrap variable overrides */
+    --bs-dark: var(--background);
+    --bs-dark-rgb: 243, 242, 239;
+    --bs-body-bg: var(--background);
+    --bs-secondary: var(--surface);
+    --bs-light: var(--surface);
+    --bs-light-rgb: 255, 255, 255;
+    --bs-primary: var(--primary);
+    --bs-primary-rgb: 10, 102, 194;
+    --bs-body-color: var(--text-primary);
+    --bs-body-color-rgb: 25, 25, 25;
+    --bs-border-color: var(--border);
+    --bs-link-color: var(--primary);
+    --bs-link-hover-color: var(--primary-hover);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--background);
+  padding-top: 56px; /* Adjust based on your navbar height */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* General text colors */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p {
+    color: var(--text-secondary);
+}
+
+/* Card styling */
+.card {
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.card-title {
+    color: var(--text-primary);
+}
+
+.card-text {
+    color: var(--text-secondary);
+}
+
+/* Portfolio Card Specific Styling (Spotify/Instagram-like) */
+.portfolio-card {
+    border-radius: 12px; /* More rounded corners */
+    overflow: hidden; /* Ensures content respects border-radius */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Stronger shadow for depth */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-5px); /* More pronounced lift on hover */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.portfolio-card-img-placeholder {
+    background-color: var(--border); /* Light background for placeholder */
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100%) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 3rem; /* Larger icon */
+    overflow: hidden; /* Hide overflowing parts of the image */
+}
+
+.portfolio-card-img-placeholder img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the area, cropping if necessary */
+    object-position: center; /* Center the image */
+}
+
+.portfolio-card .card-body {
+    padding: 1.25rem; /* Standard padding */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.portfolio-card .card-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.portfolio-card .card-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.portfolio-card .btn {
+    margin-top: auto; /* Pushes button to the bottom */
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: var(--surface) !important;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar .navbar-brand, .navbar .nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+}
+
+.navbar .navbar-brand img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar .navbar-brand .align-middle {
+    vertical-align: middle;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* Footer styling */
+.footer {
+    background-color: var(--surface) !important;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+/* Form control styling */
+.form-control {
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(10, 102, 194, 0.25);
+}
+
+label {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 24px; /* Pill shape */
+    padding: 10px 24px;
+    font-weight: 600;
+    color: #FFFFFF; /* Ensure text on primary button is white */
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-success {
+    background-color: var(--success);
+    border-color: var(--success);
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.btn-success:hover {
+    background-color: #36A36F; /* Slightly darker green */
+    border-color: #36A36F;
+}
+
+.btn-github {
+    background-color: #333; /* GitHub black */
+    border-color: #333;
+    color: #FFFFFF;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-weight: 600;
+}
+
+.btn-github:hover {
+    background-color: #555; /* Slightly lighter black */
+    border-color: #555;
+}
+
+.btn-info, .btn-secondary, .btn-danger {
+    border-radius: 4px;
+}
+
+/* Alert styling */
+.alert-success {
+    background-color: var(--success);
+    border-color: var(--success);
+    color: #FFFFFF;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    background-color: var(--error);
+    border-color: var(--error);
+    color: #FFFFFF !important;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+.alert-warning {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: #FFFFFF;
+    border-radius: 4px;
+}
+
+/* Custom styles for LinkedIn-like homepage */
+.hero-section {
+    background-color: var(--surface);
+    padding: 60px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 40px;
+}
+
+.hero-content h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: var(--text-secondary);
+}
+
+.hero-illustration img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.auth-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    position: relative; /* For positioning the background image */
+    overflow: hidden; /* Hide overflow of background image */
+}
+
+.auth-card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover; /* Cover the entire area */
+    background-position: center; /* Center the image */
+    opacity: 0.1; /* Subtle background */
+    z-index: 0; /* Behind content */
+}
+
+.auth-card > *:not(.auth-card-bg) {
+    position: relative; /* Bring content above background */
+    z-index: 1;
+}
+
+.auth-card h4 {
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.feature-box {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    text-align: center;
+    height: 100%;
+}
+
+.feature-box i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.feature-box h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.feature-box p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Portfolio Detail Page Styling */
+.portfolio-detail-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.portfolio-detail-card .card-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.portfolio-detail-card .card-subtitle {
+    font-size: 1.1rem;
+}
+
+.portfolio-detail-card .card-text.lead {
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+.portfolio-detail-card .card-img-top {
+    width: 100%;
+    height: 300px; /* Fixed height for consistency */
+    object-fit: cover; /* Cover the area, cropping if necessary */
+    border-bottom: 1px solid var(--border);
+}
+
+.feedback-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-card .card-body {
+    padding: 1rem;
+}
+
+.feedback-card .card-subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.feedback-card .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.feedback-list {
+    max-height: 500px; /* Example: scrollable feedback section */
+    overflow-y: auto;
+    padding-right: 15px; /* For scrollbar */
+}
+
+
+/* Profile DP Upload Area */
+.profile-dp-upload-area {
+    cursor: pointer;
+    width: 150px; /* Same as profile display */
+    height: 150px; /* Same as profile display */
+    display: block; /* To center with mx-auto */
+    margin-bottom: 1rem; /* Space below */
+}
+
+.profile-dp-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+
+.profile-dp-preview.fa-user-circle {
+    font-size: 7em; /* Adjust size for icon */
+    line-height: 1; /* Center icon vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-dp-overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-dp-upload-area:hover .profile-dp-overlay {
+    opacity: 1;
+}
+
+/* Profile Dashboard Styling */
+.sidebar {
+    background-color: var(--surface);
+    border-right: 1px solid var(--border);
+    min-height: calc(100vh - 56px); /* Full height minus navbar */
+    padding-top: 20px;
+}
+
+.sidebar-icon {
+    color: var(--text-secondary);
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    transition: color 0.2s ease;
+}
+
+.sidebar-icon:hover,
+.sidebar-icon.active {
+    color: var(--primary);
+}
+
+.list-group-item {
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text-primary);
+}
+
+.list-group-item:last-child {
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.list-group-item:first-child {
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+}
+
+@media (max-width: 767.98px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .feature-box {
+        margin-bottom: 20px;
+    }
+}

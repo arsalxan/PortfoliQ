@@ -1,0 +1,43 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header text-center">
+                    <h3>Feedback for <%= portfolio.user.fullName %>'s Portfolio</h3>
+                </div>
+                <div class="card-body text-center">
+                    <% if (portfolio.screenshot) { %>
+                        <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
+                    <% } else { %>
+                        <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
+                    <% } %>
+                    <p class="text-muted"><%= portfolio.description %></p>
+                </div>
+            </div>
+            <% if (portfolio.feedbacks.length) { %>
+                <div class="feedback-list">
+                    <% portfolio.feedbacks.forEach(feedback => { %>
+                    <div class="card mb-3 feedback-card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-secondary">by <%= feedback.user.username %></h6>
+                            <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design %></p><% } %>
+                            <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness %></p><% } %>
+                            <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content %></p><% } %>
+                            <% if (feedback.ux_flow) { %><p class="card-text"><strong>UX Flow:</strong> <%= feedback.ux_flow %></p><% } %>
+                            <% if (feedback.accessibility) { %><p class="card-text"><strong>Accessibility:</strong> <%= feedback.accessibility %></p><% } %>
+                            <% if (feedback.technical_performance) { %><p class="card-text"><strong>Technical Performance:</strong> <%= feedback.technical_performance %></p><% } %>
+                            <% if (feedback.additional) { %><p class="card-text"><strong>Additional:</strong> <%= feedback.additional %></p><% } %>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info text-center" role="alert">
+                    No feedback has been submitted for this portfolio yet. Be the first to give some!
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

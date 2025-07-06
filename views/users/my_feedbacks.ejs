@@ -1,0 +1,31 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4 text-center">My Feedbacks</h1>
+            <% if (feedbacks.length) { %>
+                <div class="feedback-list">
+                    <% feedbacks.forEach(feedback => { %>
+                    <div class="card mb-3 feedback-card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-secondary">Feedback for: <a href="/portfolios/<%= feedback.portfolio._id %>" class="text-decoration-none"><%= feedback.portfolio.url %></a></h6>
+                            <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design %></p><% } %>
+                            <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness %></p><% } %>
+                            <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content %></p><% } %>
+                            <% if (feedback.ux_flow) { %><p class="card-text"><strong>UX Flow:</strong> <%= feedback.ux_flow %></p><% } %>
+                            <% if (feedback.accessibility) { %><p class="card-text"><strong>Accessibility:</strong> <%= feedback.accessibility %></p><% } %>
+                            <% if (feedback.technical_performance) { %><p class="card-text"><strong>Technical Performance:</strong> <%= feedback.technical_performance %></p><% } %>
+                            <% if (feedback.additional) { %><p class="card-text"><strong>Additional:</strong> <%= feedback.additional %></p><% } %>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info text-center" role="alert">
+                    You haven't submitted any feedback yet.
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

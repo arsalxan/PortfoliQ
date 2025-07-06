@@ -1,0 +1,33 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card p-4">
+                <h1 class="mb-4 text-center">Add New Portfolio</h1>
+                <form action="/portfolios" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Portfolio URL</label>
+                        <input type="url" name="portfolio[url]" id="url" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea name="portfolio[description]" id="description" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="screenshot" class="form-label">Screenshot (Optional)</label>
+                        <input type="file" name="screenshot" id="screenshot" class="form-control" accept="image/*">
+                        <small class="form-text text-muted">For best results, please upload screenshots with a 16:9 aspect ratio (e.g., 1920x1080 pixels).</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gitRepo" class="form-label">Git Repository URL (Optional)</label>
+                        <input type="url" name="portfolio[gitRepo]" id="gitRepo" class="form-control">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Submit Portfolio <i class="fas fa-upload ms-2"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

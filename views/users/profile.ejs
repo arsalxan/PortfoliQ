@@ -1,0 +1,96 @@
+<% layout('layouts/main') -%>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Left Sidebar (Icon Menu) -->
+        <div class="col-1 d-none d-md-block sidebar">
+            <div class="d-flex flex-column align-items-center py-3">
+                <a href="/profile" class="sidebar-icon active"><i class="fas fa-user"></i></a>
+                <a href="/portfolios" class="sidebar-icon"><i class="fas fa-th-large"></i></a>
+                <a href="/portfolios/new" class="sidebar-icon"><i class="fas fa-plus-circle"></i></a>
+                <a href="/dashboard" class="sidebar-icon"><i class="fas fa-chart-line"></i></a>
+                <a href="/logout" class="sidebar-icon"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-11 col-md-11">
+            <div class="row">
+                <!-- Profile Section (Left Card) -->
+                <div class="col-lg-7 mb-4">
+                    <div class="card h-100 p-4">
+                        <h2 class="mb-4"><%=user.fullName  %></h2>
+                        <div class="d-flex flex-column align-items-center mb-4">
+                            <% if (user.dp) { %>
+                                <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid var(--primary);">
+                            <% } else { %>
+                                <i class="fas fa-user-circle fa-7x mb-3 text-secondary"></i>
+                            <% } %>
+                            <h3 class="mb-1">@<%= user.username %></h3>
+                            <p class="text-muted"><%= user.email %></p>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Cards -->
+                <div class="col-lg-5">
+                    <div class="row">
+                        <!-- My Feedbacks (Top-Right Card) -->
+                        <div class="col-12 mb-4">
+                            <div class="card h-100 p-4">
+                                <h4 class="mb-3">My Feedbacks</h4>
+                                <% if (userFeedbacks && userFeedbacks.length) { %>
+                                    <ul class="list-group list-group-flush">
+                                        <% userFeedbacks.forEach(feedback => { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <% if (feedback.portfolio) { %>
+                                                        <strong><%= feedback.portfolio.url %></strong>
+                                                        <small class="d-block text-muted">Feedback given</small>
+                                                    <% } else { %>
+                                                        <strong>[Portfolio Deleted]</strong>
+                                                        <small class="d-block text-muted">Feedback given</small>
+                                                    <% } %>
+                                                </div>
+                                                <% if (feedback.portfolio) { %>
+                                                    <a href="/portfolios/<%= feedback.portfolio._id %>/feedbacks" class="btn btn-sm btn-outline-primary">View</a>
+                                                <% } %>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %>
+                                    <p class="text-muted">No feedback yet.</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- My Portfolio (Bottom-Right Card) -->
+                        <div class="col-12 mb-4">
+                            <div class="card h-100 p-4">
+                                <h4 class="mb-3">My Portfolios</h4>
+                                <% if (userPortfolios && userPortfolios.length) { %>
+                                    <ul class="list-group list-group-flush">
+                                        <% userPortfolios.forEach(portfolio => { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong><%= portfolio.url %></strong>
+                                                    <small class="d-block text-muted"><%= portfolio.description.substring(0, 50) %>...</small>
+                                                </div>
+                                                <a href="/portfolios/<%= portfolio._id %>" class="btn btn-sm btn-outline-primary">View</a>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                <% } else { %>
+                                    <p class="text-muted">No portfolio items yet. <a href="/portfolios/new">Add one!</a></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

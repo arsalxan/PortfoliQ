@@ -1,0 +1,72 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card p-4">
+                <div class="mb-4 text-center">
+                    <% if (portfolio.screenshot) { %>
+                        <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
+                    <% } else { %>
+                        <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
+                    <% } %>
+                </div>
+                <p class="text-muted text-center">(One of the fields has to be filled with at least 20 characters to give feedback. Empty feedback is not allowed.)</p>
+                <form action="/portfolios/<%= portfolio._id %>/feedbacks" method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="design" class="form-label">Design</label>
+                        <textarea name="feedback[design]" id="design" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Design feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="responsiveness" class="form-label">Responsiveness</label>
+                        <textarea name="feedback[responsiveness]" id="responsiveness" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Responsiveness feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content/Copywriting</label>
+                        <textarea name="feedback[content]" id="content" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Content/Copywriting feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ux_flow" class="form-label">UX Flow</label>
+                        <textarea name="feedback[ux_flow]" id="ux_flow" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for UX Flow feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="accessibility" class="form-label">Accessibility</label>
+                        <textarea name="feedback[accessibility]" id="accessibility" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Accessibility feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="technical_performance" class="form-label">Technical Performance</label>
+                        <textarea name="feedback[technical_performance]" id="technical_performance" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Technical Performance feedback.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="additional" class="form-label">Additional Feedback (Optional)</label>
+                        <textarea name="feedback[additional]" id="additional" class="form-control" rows="3" minlength="20"></textarea>
+                        <div class="invalid-feedback">
+                            Please provide at least 20 characters for Additional feedback.
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Submit Feedback <i class="fas fa-paper-plane ms-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
