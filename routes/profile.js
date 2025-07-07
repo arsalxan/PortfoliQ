@@ -55,7 +55,11 @@ router.get('/myfeedbacks', isLoggedIn, async (req, res) => {
 // Show all portfolios given by the user
 router.get('/myportfolios', isLoggedIn, async (req, res) => {
   try {
-    const portfolios = await Portfolio.find({ user: req.user._id }).populate('user');
+    let portfolios = await Portfolio.find({ user: req.user._id }).populate('user');
+    portfolios = await Promise.all(portfolios.map(async (portfolio) => {
+      const feedbackCount = await Feedback.countDocuments({ portfolio: portfolio._id });
+      return { ...portfolio.toObject(), feedbackCount };
+    }));
     res.render('users/my_portfolios', { portfolios });
   } catch (err) {
     console.error(err);

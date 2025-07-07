@@ -15,12 +15,7 @@ const portfolioSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  feedbacks: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Feedback'
-    }
-  ]
+  
 });
 
 module.exports = mongoose.model('Portfolio', portfolioSchema);

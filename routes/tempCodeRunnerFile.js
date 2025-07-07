@@ -19,15 +19,10 @@ router.get('/register', (req, res) => {
 
 router.post('/register',
   [
-    body('username')
-      .trim()
-      .isLength({ min: 3 }).withMessage('Username must be at least 3 characters long.')
-      .matches(/^[a-z0-9_]+$/).withMessage('Username can only contain lowercase letters, numbers, and underscores.'),
+    body('username').trim().notEmpty().withMessage('Username cannot be empty.'),
     body('email').isEmail().withMessage('Please enter a valid email address.'),
     body('fullName').trim().notEmpty().withMessage('Full Name cannot be empty.'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.')
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/)
-      .withMessage('Password must contain at least one uppercase letter, one number, and one special character.'),
+    body('password').notEmpty().withMessage('Password cannot be empty.'),
   ],
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -50,8 +45,6 @@ router.post('/register',
     } catch (e) {
       if (e.name === 'UserExistsError') {
         req.flash('error', 'Username already taken, try a new one');
-      } else if (e.code === 11000 && e.message.includes('email')) {
-        req.flash('error', 'Email already registered, please use a different email or login.');
       } else {
         req.flash('error', e.message);
       }
@@ -88,7 +81,7 @@ router.post('/logout', (req, res, next) => {
 // Dashboard
 router.get('/dashboard', isLoggedIn, async (req, res) => {
   const portfolios = await Portfolio.find({ user: req.user._id }).populate('user').sort({ createdAt: -1 }).limit(3);
-  const feedbacks = await Feedback.find({ user: req.user._id }).populate({ path: 'portfolio', populate: { path: 'user' } }).sort({ createdAt: -1 }).limit(3);
+  const feedbacks = await Feedback.find({ user: req.user._id }).populate({ path: 'portfolio', populate: { path: 'user' } }).populate('user').sort({ createdAt: -1 }).limit(3);
   res.render('dashboard', { portfolios, feedbacks });
 });
 

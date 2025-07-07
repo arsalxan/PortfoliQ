@@ -102,9 +102,7 @@ const seedDB = async () => {
             });
 
             await feedback.save();
-            portfolio.feedbacks.push(feedback._id);
-        }
-        await portfolio.save();
+            }
         console.log(`💬 Added feedbacks to portfolio: ${portfolio.url}`);
     }
 

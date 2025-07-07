@@ -18,17 +18,13 @@ router.get('/new', isLoggedIn, async (req, res) => {
 
 // Show all feedbacks for a portfolio
 router.get('/', async (req, res) => {
-  const portfolio = await Portfolio.findById(req.params.id).populate({
-    path: 'feedbacks',
-    populate: {
-      path: 'user'
-    }
-  }).populate('user');
+  const portfolio = await Portfolio.findById(req.params.id).populate('user');
   if (!portfolio) {
     req.flash('error', 'Cannot find that portfolio!');
     return res.redirect('/portfolios');
   }
-  res.render('feedbacks/index', { portfolio });
+  const feedbacks = await Feedback.find({ portfolio: req.params.id }).populate('user');
+  res.render('feedbacks/index', { portfolio, feedbacks });
 });
 
 // Create Feedback
@@ -75,7 +71,6 @@ router.post('/', isLoggedIn,
     const feedback = new Feedback(req.body.feedback);
     feedback.user = req.user._id;
     feedback.portfolio = portfolio._id;
-    portfolio.feedbacks.push(feedback);
     await feedback.save();
     await portfolio.save();
     req.flash('success', 'Successfully added your feedback!');
@@ -97,10 +92,9 @@ router.get('/:feedbackId', async (req, res) => {
 // Delete Feedback
 router.delete('/:feedbackId', isLoggedIn, async (req, res) => {
   const { id, feedbackId } = req.params;
-  await Portfolio.findByIdAndUpdate(id, { $pull: { feedbacks: feedbackId } });
   await Feedback.findByIdAndDelete(feedbackId);
   req.flash('success', 'Successfully deleted your feedback!');
-  res.redirect(`/portfolios/${id}`);
+  res.redirect(`/portfolios/${id}/feedbacks`);
 });
 
 module.exports = router;

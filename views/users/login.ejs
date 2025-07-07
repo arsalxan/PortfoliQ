@@ -22,9 +22,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label" style="color: var(--text-primary); font-weight: 500;">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" required style="border-radius: 8px; padding: 10px 15px; border-color: var(--border);">
-                            <div class="invalid-feedback">
-                                Please enter your password.
+                            <div class="input-group has-validation">
+                                <input type="password" name="password" id="password" class="form-control" required style="border-radius: 8px 0 0 8px; padding: 10px 15px; border-color: var(--border);">
+                                <span class="input-group-text" id="togglePassword" style="cursor: pointer; border-radius: 0 8px 8px 0;"><i class="fas fa-eye"></i></span>
+                                <div class="invalid-feedback">
+                                    Please enter your password.
+                                </div>
                             </div>
                         </div>
                         <div class="d-grid gap-2 mb-3">

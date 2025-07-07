@@ -16,9 +16,9 @@
                     <p class="text-muted"><%= portfolio.description %></p>
                 </div>
             </div>
-            <% if (portfolio.feedbacks.length) { %>
+            <% if (feedbacks.length) { %>
                 <div>
-                    <% portfolio.feedbacks.forEach(feedback => { %>
+                    <% feedbacks.forEach(feedback => { %>
                     <div class="card mb-3 feedback-card">
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-secondary">by <%= feedback.user.username %></h6>

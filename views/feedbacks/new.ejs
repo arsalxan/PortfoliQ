@@ -5,14 +5,16 @@
         <div class="col-md-8 col-lg-6">
             <div class="card p-4">
                 <div class="mb-4 text-center">
-                    <% if (portfolio.screenshot) { %>
-                        <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
-                    <% } else { %>
-                        <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
-                    <% } %>
+                    <a href="<%= portfolio.url %>" target="_blank" class="d-inline-block">
+                        <% if (portfolio.screenshot) { %>
+                            <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
+                        <% } else { %>
+                            <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
+                        <% } %>
+                    </a>
                 </div>
                 <p class="text-muted text-center">(One of the fields has to be filled with at least 20 characters to give feedback. Empty feedback is not allowed.)</p>
-                <form action="/portfolios/<%= portfolio._id %>/feedbacks" method="POST" class="needs-validation" novalidate>
+                <form action="/portfolios/<%= portfolio._id %>/feedbacks" method="POST" class="needs-validation feedback-form" novalidate>
                     <div class="mb-3">
                         <label for="design" class="form-label">Design</label>
                         <textarea name="feedback[design]" id="design" class="form-control" rows="3" minlength="20"></textarea>

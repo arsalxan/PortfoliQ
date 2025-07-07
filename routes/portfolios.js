@@ -14,52 +14,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const router = express.Router();
 const Portfolio = require('../models/portfolio');
+const Feedback = require('../models/feedback'); // Import Feedback model
 const { isLoggedIn } = require('../middleware');
 const { body, validationResult } = require('express-validator');
 
 // Index
 router.get('/', async (req, res) => {
-  const portfolios = await Portfolio.aggregate([
-    {
-      $lookup: {
-        from: 'feedbacks',
-        localField: 'feedbacks',
-        foreignField: '_id',
-        as: 'feedbacksData'
-      }
-    },
-    {
-      $addFields: {
-        feedbackCount: { $size: '$feedbacksData' }
-      }
-    },
-    {
-      $sort: { feedbackCount: 1 } // Sort by feedbackCount in ascending order
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'user',
-        foreignField: '_id',
-        as: 'user'
-      }
-    },
-    {
-      $unwind: '$user' // Deconstructs the user array field from the input documents to output a document for each element.
-    },
-    {
-      $project: { // Project fields to match the original structure
-        _id: 1,
-        url: 1,
-        description: 1,
-        gitRepo: 1,
-        screenshot: 1,
-        user: 1,
-        feedbacks: 1, // Keep original feedbacks array for other uses if needed
-        feedbackCount: 1
-      }
-    }
-  ]);
+  let portfolios = await Portfolio.find({}).populate('user');
+
+  portfolios = await Promise.all(portfolios.map(async (portfolio) => {
+    const feedbackCount = await Feedback.countDocuments({ portfolio: portfolio._id });
+    return { ...portfolio.toObject(), feedbackCount };
+  }));
+
+  portfolios.sort((a, b) => a.feedbackCount - b.feedbackCount);
+
   res.render('portfolios/index', { portfolios });
 });
 
@@ -100,17 +69,13 @@ router.post('/', isLoggedIn, upload.single('screenshot'),
 
 // Show
 router.get('/:id', async (req, res) => {
-  const portfolio = await Portfolio.findById(req.params.id).populate({
-    path: 'feedbacks',
-    populate: {
-      path: 'user'
-    }
-  }).populate('user');
+  const portfolio = await Portfolio.findById(req.params.id).populate('user');
   if (!portfolio) {
     req.flash('error', 'Cannot find that portfolio!');
     return res.redirect('/portfolios');
   }
-  res.render('portfolios/show', { portfolio });
+  const feedbacks = await Feedback.find({ portfolio: req.params.id }).populate('user');
+  res.render('portfolios/show', { portfolio, feedbacks });
 });
 
 // Edit
