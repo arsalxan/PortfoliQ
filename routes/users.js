@@ -43,7 +43,11 @@ router.post('/register',
         res.redirect('/portfolios');
       });
     } catch (e) {
-      req.flash('error', e.message);
+      if (e.name === 'UserExistsError') {
+        req.flash('error', 'Username already taken, try a new one');
+      } else {
+        req.flash('error', e.message);
+      }
       res.redirect('register');
     }
   }
