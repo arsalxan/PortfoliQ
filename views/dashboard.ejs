@@ -1,20 +1,52 @@
 <% layout('layouts/main') -%>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Your Dashboard</h1>
+    <h2 class="mb-4 text-primary">Welcome back, <%= currentUser.username %>!</h2>
 
     <div class="mb-5">
-        <h2>My Portfolios</h2>
+        <h3 class="mb-3">My Submitted Portfolios <a href="/profile/myportfolios" class="btn btn-sm btn-outline-primary ms-2">View All <i class="fas fa-arrow-right ms-1"></i></a></h3>
         <% if (portfolios.length) { %>
-        <div class="row">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <% portfolios.forEach(portfolio => { %>
-            <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100">
+            <div class="col">
+                <div class="portfolio-card card h-100 shadow-sm">
+                    <div class="portfolio-card-img-container">
+                        <a href="<%= portfolio.url %>" target="_blank" class="d-block">
+                            <% if (portfolio.screenshot) { %>
+                                <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="portfolio-card-img" onerror="this.onerror=null;this.src='/images/defaultscreenshot.svg';">
+                            <% } else { %>
+                                <img src="/images/defaultscreenshot.svg" alt="No Screenshot Available" class="portfolio-card-img">
+                            <% } %>
+                        </a>
+                    </div>
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title"><%= portfolio.url %></h5>
-                        <p class="card-text text-secondary"><%= portfolio.description.substring(0, 100) %>...</p>
-                        <div class="mt-auto">
-                            <a href="/portfolios/<%= portfolio._id %>" class="btn btn-primary btn-sm">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0 text-truncate me-2">
+                                <a href="<%= portfolio.url %>" target="_blank" class="text-decoration-none text-primary-emphasis">
+                                    <%= portfolio.user.fullName %>'s Portfolio
+                                </a>
+                            </h5>
+                            <a href="/portfolios/<%= portfolio._id %>/feedbacks" class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2 text-decoration-none">
+                                <i class="fas fa-comments me-1"></i> <%= portfolio.feedbacks.length %>
+                            </a>
+                        </div>
+                        <p class="card-subtitle text-secondary mb-2">by <small class="text-muted"><%= portfolio.user.username %></small></p>
+                        <p class="card-text text-truncate-2-lines flex-grow-1">
+                            <% if (portfolio.description) { %>
+                                <%= portfolio.description %>
+                            <% } else { %>
+                                <span class="text-muted">No description provided.</span>
+                            <% } %>
+                        </p>
+                        <div class="mt-auto pt-3 d-flex flex-wrap justify-content-end gap-2">
+                            <a href="/portfolios/<%= portfolio._id %>/edit" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                            <form action="/portfolios/<%= portfolio._id %>?_method=DELETE" method="POST" class="d-inline">
+                                <button class="btn btn-danger btn-sm d-flex align-items-center">
+                                    <i class="fas fa-trash-alt me-1"></i> Delete
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -22,36 +54,57 @@
             <% }); %>
         </div>
         <% } else { %>
-        <div class="alert alert-info" role="alert">
-            You haven't submitted any portfolios yet. <a href="/portfolios/new" class="alert-link">Submit your first portfolio!</a>
+        <div class="alert alert-info text-center" role="alert">
+            <h4 class="alert-heading">No Portfolios Yet!</h4>
+            <p>You haven't submitted any portfolios. <a href="/portfolios/new" class="alert-link">Submit your first portfolio!</a></p>
         </div>
         <% } %>
     </div>
 
     <div>
-        <h2>Feedback I've Given</h2>
+        <h3 class="mb-3">Feedbacks I've Given <a href="/profile/myfeedbacks" class="btn btn-sm btn-outline-primary ms-2">View All <i class="fas fa-arrow-right ms-1"></i></a></h3>
         <% if (feedbacks.length) { %>
-        <div class="row">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <% feedbacks.forEach(feedback => { %>
-            <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Feedback on a Portfolio</h5>
-                        <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design.substring(0, 100) %>...</p><% } %>
-                        <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness.substring(0, 100) %>...</p><% } %>
-                        <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content.substring(0, 100) %>...</p><% } %>
-                        <% if (feedback.ux_flow) { %><p class="card-text"><strong>UX Flow:</strong> <%= feedback.ux_flow.substring(0, 100) %>...</p><% } %>
-                        <% if (feedback.accessibility) { %><p class="card-text"><strong>Accessibility:</strong> <%= feedback.accessibility.substring(0, 100) %>...</p><% } %>
-                        <% if (feedback.technical_performance) { %><p class="card-text"><strong>Technical Performance:</strong> <%= feedback.technical_performance.substring(0, 100) %>...</p><% } %>
-                        <p class="card-text text-secondary"><em>Given by you</em></p>
+            <div class="col">
+                <div class="card h-100 shadow-sm portfolio-card">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold mb-2">Feedback for <%= feedback.portfolio.user.fullName %>'s Portfolio</h5>
+                        <p class="card-text text-truncate-2-lines flex-grow-1">
+                            <% 
+                                let summaryText = '<span class="text-muted">No general comments provided.</span>';
+                                if (feedback.content) {
+                                    summaryText = feedback.content;
+                                } else if (feedback.technical_performance) {
+                                    summaryText = 'Technical Performance: ' + feedback.technical_performance;
+                                } else if (feedback.design) {
+                                    summaryText = 'Design: ' + feedback.design;
+                                } else if (feedback.responsiveness) {
+                                    summaryText = 'Responsiveness: ' + feedback.responsiveness;
+                                } else if (feedback.ux_flow) {
+                                    summaryText = 'UX Flow: ' + feedback.ux_flow;
+                                } else if (feedback.accessibility) {
+                                    summaryText = 'Accessibility: ' + feedback.accessibility;
+                                } else if (feedback.additional) {
+                                    summaryText = 'Additional: ' + feedback.additional;
+                                }
+                            %>
+                            <%= summaryText %>
+                        </p>
+                        <div class="mt-auto pt-3 d-flex flex-wrap justify-content-end gap-2">
+                            <a href="/portfolios/<%= feedback.portfolio._id %>/feedbacks/<%= feedback._id %>" class="btn btn-primary btn-sm d-flex align-items-center">
+                                <i class="fas fa-eye me-1"></i> View Feedback
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             <% }); %>
         </div>
         <% } else { %>
-        <div class="alert alert-info" role="alert">
-            You haven't given any feedback yet. <a href="/portfolios" class="alert-link">Browse portfolios to give feedback!</a>
+        <div class="alert alert-info text-center" role="alert">
+            <h4 class="alert-heading">No Feedback Given Yet!</h4>
+            <p>You haven't given any feedback. <a href="/portfolios" class="alert-link">Browse portfolios to give feedback!</a></p>
         </div>
         <% } %>
     </div>

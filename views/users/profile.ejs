@@ -4,92 +4,135 @@
     <div class="row">
         <!-- Left Sidebar (Icon Menu) -->
         <div class="col-1 d-none d-md-block sidebar">
-            <div class="d-flex flex-column align-items-center py-3">
-                <a href="/profile" class="sidebar-icon active"><i class="fas fa-user"></i></a>
-                <a href="/portfolios" class="sidebar-icon"><i class="fas fa-th-large"></i></a>
-                <a href="/portfolios/new" class="sidebar-icon"><i class="fas fa-plus-circle"></i></a>
-                <a href="/dashboard" class="sidebar-icon"><i class="fas fa-chart-line"></i></a>
-                <a href="/logout" class="sidebar-icon"><i class="fas fa-sign-out-alt"></i></a>
+            <div class="d-flex flex-column py-3">
+                <a href="/profile" class="sidebar-icon active w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Profile"><i class="fas fa-user"></i></a>
+                <a href="/portfolios" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Portfolios"><i class="fas fa-th-large"></i></a>
+                <a href="/portfolios/new" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Add New Portfolio"><i class="fas fa-plus-circle"></i></a>
+                <a href="/dashboard" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard"><i class="fas fa-chart-line"></i></a>
+                
             </div>
         </div>
 
         <!-- Main Content Area -->
         <div class="col-11 col-md-11">
             <div class="row">
-                <!-- Profile Section (Left Card) -->
-                <div class="col-lg-7 mb-4">
-                    <div class="card h-100 p-4">
-                        <h2 class="mb-4"><%=user.fullName  %></h2>
+                <div class="col-auto mb-4">
+                    <div class="card p-3 shadow-sm">
+                        <h2 class="mb-0">My Profile</h2>
+                        <p class="text-muted mb-0">(Manage your account details and preferences)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Profile Overview Card -->
+                <div class="col-lg-6">
+                    <div class="card h-100 shadow-sm p-4">
+                        <h4 class="mb-3 text-primary"><%= user.fullName %>'s Profile</h4>
                         <div class="d-flex flex-column align-items-center mb-4">
                             <% if (user.dp) { %>
-                                <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid var(--primary);">
+                                <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary);">
                             <% } else { %>
                                 <i class="fas fa-user-circle fa-7x mb-3 text-secondary"></i>
                             <% } %>
-                            <h3 class="mb-1">@<%= user.username %></h3>
+                            <h3 class="mb-1 text-primary-emphasis"><%= user.fullName %></h3>
                             <p class="text-muted"><%= user.email %></p>
                         </div>
-                        <div class="d-grid gap-2">
-                            <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+
+                        <div class="d-flex justify-content-center gap-3 mb-4">
+                            <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2">
+                                <i class="fas fa-upload me-1"></i> Submissions: <%= userPortfolios.length %>
+                            </span>
+                            <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2">
+                                <i class="fas fa-comments me-1"></i> Feedbacks Given: <%= userFeedbacks.length %>
+                            </span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-primary mb-2" data-bs-toggle="collapse" data-bs-target="#editProfileForm" aria-expanded="false" aria-controls="editProfileForm">
+                                Edit Profile <i class="fas fa-edit ms-2"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                Delete Account <i class="fas fa-exclamation-triangle ms-2"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Cards -->
-                <div class="col-lg-5">
-                    <div class="row">
-                        <!-- My Feedbacks (Top-Right Card) -->
-                        <div class="col-12 mb-4">
-                            <div class="card h-100 p-4">
-                                <h4 class="mb-3">My Feedbacks</h4>
-                                <% if (userFeedbacks && userFeedbacks.length) { %>
-                                    <ul class="list-group list-group-flush">
-                                        <% userFeedbacks.forEach(feedback => { %>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <% if (feedback.portfolio) { %>
-                                                        <strong><%= feedback.portfolio.url %></strong>
-                                                        <small class="d-block text-muted">Feedback given</small>
-                                                    <% } else { %>
-                                                        <strong>[Portfolio Deleted]</strong>
-                                                        <small class="d-block text-muted">Feedback given</small>
-                                                    <% } %>
-                                                </div>
-                                                <% if (feedback.portfolio) { %>
-                                                    <a href="/portfolios/<%= feedback.portfolio._id %>/feedbacks" class="btn btn-sm btn-outline-primary">View</a>
-                                                <% } %>
-                                            </li>
-                                        <% }); %>
-                                    </ul>
-                                <% } else { %>
-                                    <p class="text-muted">No feedback yet.</p>
-                                <% } %>
-                            </div>
-                        </div>
-
-                        <!-- My Portfolio (Bottom-Right Card) -->
-                        <div class="col-12 mb-4">
-                            <div class="card h-100 p-4">
-                                <h4 class="mb-3">My Portfolios</h4>
-                                <% if (userPortfolios && userPortfolios.length) { %>
-                                    <ul class="list-group list-group-flush">
-                                        <% userPortfolios.forEach(portfolio => { %>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <strong><%= portfolio.url %></strong>
-                                                    <small class="d-block text-muted"><%= portfolio.description.substring(0, 50) %>...</small>
-                                                </div>
-                                                <a href="/portfolios/<%= portfolio._id %>" class="btn btn-sm btn-outline-primary">View</a>
-                                            </li>
-                                        <% }); %>
-                                    </ul>
-                                <% } else { %>
-                                    <p class="text-muted">No portfolio items yet. <a href="/portfolios/new">Add one!</a></p>
-                                <% } %>
-                            </div>
+                <!-- Edit Profile Form Card (Collapsible) -->
+                <div class="col-lg-6">
+                    <div class="collapse" id="editProfileForm">
+                        <div class="card h-100 shadow-sm p-4">
+                            <h4 class="mb-3 text-primary">Edit Profile Details</h4>
+                            <form action="/profile?_method=PUT" method="POST" enctype="multipart/form-data">
+                                <div class="mb-3 text-center">
+                                    <label for="dp" class="profile-dp-upload-area d-inline-block position-relative">
+                                        <% if (user.dp) { %>
+                                            <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle profile-dp-preview">
+                                        <% } else { %>
+                                            <i class="fas fa-user-circle fa-7x text-secondary profile-dp-preview"></i>
+                                        <% } %>
+                                        <div class="profile-dp-overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
+                                            <i class="fas fa-plus fa-2x text-white"></i>
+                                        </div>
+                                    </label>
+                                    <input type="file" name="dp" id="dp" class="d-none" accept="image/*">
+                                    <% if (user.dp) { %>
+                                        <small class="form-text text-muted d-block mt-2">Click DP to change. Current DP: <a href="<%= user.dp %>" target="_blank">View</a></small>
+                                    <% } else { %>
+                                        <small class="form-text text-muted d-block mt-2">Click icon to upload DP.</small>
+                                    <% } %>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" name="username" id="username" class="form-control" value="<%= user.username %>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">Full Name</label>
+                                    <input type="text" name="fullName" id="fullName" class="form-control" value="<%= user.fullName || '' %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+                                    <input type="password" name="password" id="password" class="form-control">
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Save Changes <i class="fas fa-save ms-2"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#editProfileForm" aria-expanded="false" aria-controls="editProfileForm">
+                                        Cancel <i class="fas fa-times ms-2"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+
+                <!-- Delete Account Card -->
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Confirmation Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold text-white" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-black">
+                Are you sure you want to delete your account? All your portfolios and feedbacks will be permanently removed. This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="/profile?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </form>
             </div>
         </div>
     </div>

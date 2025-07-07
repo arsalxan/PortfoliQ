@@ -63,18 +63,21 @@ router.post('/login', passport.authenticate('local', {
 });
 
 // Logout
-router.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
+router.post('/logout', (req, res, next) => {
     req.flash('success', 'Goodbye!');
-    res.redirect('/portfolios');
-  });
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        req.session.destroy(function (err) {
+            if (err) { return next(err); }
+            res.redirect('/portfolios');
+        });
+    });
 });
 
 // Dashboard
 router.get('/dashboard', isLoggedIn, async (req, res) => {
-  const portfolios = await Portfolio.find({ user: req.user._id });
-  const feedbacks = await Feedback.find({ user: req.user._id });
+  const portfolios = await Portfolio.find({ user: req.user._id }).populate('user').sort({ createdAt: -1 }).limit(3);
+  const feedbacks = await Feedback.find({ user: req.user._id }).populate({ path: 'portfolio', populate: { path: 'user' } }).populate('user').sort({ createdAt: -1 }).limit(3);
   res.render('dashboard', { portfolios, feedbacks });
 });
 

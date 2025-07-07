@@ -2,7 +2,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">All Portfolios</h2>
+        <h2 class="mb-0">My Portfolios</h2>
         <a href="/portfolios/new" class="btn btn-primary d-flex align-items-center">
             Add New Portfolio <i class="fas fa-plus-circle ms-2"></i>
         </a>
@@ -47,11 +47,9 @@
                                     <i class="fab fa-github me-1"></i> Git Repo
                                 </a>
                             <% } %>
-                            <% if (!currentUser || portfolio.user._id.toString() !== currentUser._id.toString()) { %>
-                                <a href="/portfolios/<%= portfolio._id %>/feedbacks/new" class="btn btn-primary btn-sm d-flex align-items-center">
-                                    <i class="fas fa-comment-dots me-1"></i> Give Feedback
-                                </a>
-                            <% } %>
+                            <a href="/portfolios/<%= portfolio._id %>/feedbacks/new" class="btn btn-primary btn-sm d-flex align-items-center">
+                                <i class="fas fa-comment-dots me-1"></i> Give Feedback
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -61,7 +59,7 @@
             <div class="col-12">
                 <div class="alert alert-info text-center" role="alert">
                     <h4 class="alert-heading">No Portfolios Yet!</h4>
-                    <p>It looks like no one has submitted a portfolio. Be the first to share your work!</p>
+                    <p>It looks like you haven't submitted any portfolios. Be the first to share your work!</p>
                     <hr>
                     <a href="/portfolios/new" class="btn btn-info">
                         <i class="fas fa-plus-circle me-2"></i> Add Your First Portfolio

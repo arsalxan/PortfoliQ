@@ -1,31 +1,72 @@
 <% layout('layouts/main') -%>
 
 <div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="mb-4 text-center">My Feedbacks</h1>
-            <% if (feedbacks.length) { %>
-                <div class="feedback-list">
-                    <% feedbacks.forEach(feedback => { %>
-                    <div class="card mb-3 feedback-card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-secondary">Feedback for: <a href="/portfolios/<%= feedback.portfolio._id %>" class="text-decoration-none"><%= feedback.portfolio.url %></a></h6>
-                            <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design %></p><% } %>
-                            <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness %></p><% } %>
-                            <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content %></p><% } %>
-                            <% if (feedback.ux_flow) { %><p class="card-text"><strong>UX Flow:</strong> <%= feedback.ux_flow %></p><% } %>
-                            <% if (feedback.accessibility) { %><p class="card-text"><strong>Accessibility:</strong> <%= feedback.accessibility %></p><% } %>
-                            <% if (feedback.technical_performance) { %><p class="card-text"><strong>Technical Performance:</strong> <%= feedback.technical_performance %></p><% } %>
-                            <% if (feedback.additional) { %><p class="card-text"><strong>Additional:</strong> <%= feedback.additional %></p><% } %>
+    <h1 class="mb-4 text-center">My Feedbacks</h1>
+    <% if (feedbacks.length) { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% feedbacks.forEach(feedback=> { %>
+                <div class="col">
+                    <div class="card mb-3 feedback-card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="flex-grow-1 me-3">
+                                <h6 class="card-subtitle mb-2 text-secondary">Feedback for: <a
+                                        href="/portfolios/<%= feedback.portfolio._id %>"
+                                        class="text-decoration-none">
+                                        <%= feedback.portfolio.user.fullName %>'s Portfolio
+                                    </a></h6>
+                                <p class="card-text text-muted mb-1"><small>Given on: <%= feedback.createdAt ?
+                                            feedback.createdAt.toLocaleDateString() : 'N/A' %></small></p>
+                                <p class="card-text feedback-summary-text flex-grow-1">
+                                    <% 
+                                        let feedbackPoints = [];
+                                        if (feedback.content) {
+                                            feedbackPoints.push(feedback.content);
+                                        } else {
+                                            if (feedback.design) feedbackPoints.push('Design: ' + feedback.design);
+                                            if (feedback.responsiveness) feedbackPoints.push('Responsiveness: ' + feedback.responsiveness);
+                                            if (feedback.technical_performance) feedbackPoints.push('Tech Perf: ' + feedback.technical_performance);
+                                            if (feedback.ux_flow) feedbackPoints.push('UX: ' + feedback.ux_flow);
+                                            if (feedback.accessibility) feedbackPoints.push('Access: ' + feedback.accessibility);
+                                            if (feedback.additional) feedbackPoints.push('Addtl: ' + feedback.additional);
+                                        }
+
+                                        if (feedbackPoints.length > 0) {
+                                            let displayPoints = feedbackPoints.slice(0, 3).map(point => {
+                                                return point.length > 50 ? point.substring(0, 50) + '...' : point;
+                                            }).join(' | ');
+                                            %>
+                                            <%= displayPoints %>
+                                        <% } else { %>
+                                            <span class="text-muted">No specific feedback details provided.</span>
+                                        <% } %>
+                                </p>
+
+                                <a href="/portfolios/<%= feedback.portfolio._id %>/feedbacks/<%= feedback._id %>"
+                                    class="btn btn-sm btn-outline-primary mt-2">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                            <a href="/portfolios/<%= feedback.portfolio._id %>" target="_blank"
+                                class="mt-3 d-block">
+                                <div class="feedback-screenshot-container-full-width">
+                                    <% if (feedback.portfolio.screenshot) { %>
+                                        <img src="<%= feedback.portfolio.screenshot %>"
+                                            alt="Portfolio Screenshot" class="feedback-screenshot-full-width"
+                                            onerror="this.onerror=null;this.src='/images/defaultscreenshot.svg';">
+                                        <% } else { %>
+                                            <img src="/images/defaultscreenshot.svg"
+                                                alt="No Screenshot Available" class="feedback-screenshot-full-width">
+                                            <% } %>
+                                </div>
+                            </a>
                         </div>
                     </div>
-                    <% }); %>
                 </div>
-            <% } else { %>
-                <div class="alert alert-info text-center" role="alert">
-                    You haven't submitted any feedback yet.
-                </div>
-            <% } %>
+                <% }); %>
         </div>
+        <% } else { %>
+            <div class="alert alert-info text-center" role="alert">
+                You haven't submitted any feedback yet.
+            </div>
+            <% } %>
     </div>
-</div>

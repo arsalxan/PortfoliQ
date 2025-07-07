@@ -32,7 +32,7 @@ router.get('/', isLoggedIn, async (req, res) => {
   try {
     const userPortfolios = await Portfolio.find({ user: req.user._id }).limit(4);
     const userFeedbacks = await Feedback.find({ user: req.user._id }).populate('portfolio').limit(3);
-    res.render('users/profile', { user: req.user, userPortfolios, userFeedbacks });
+    res.render('users/profile', { user: req.user, userPortfolios, userFeedbacks, isProfilePage: true });
   } catch (err) {
     console.error('Error fetching profile data:', err);
     req.flash('error', 'Error loading profile data.');
@@ -40,19 +40,26 @@ router.get('/', isLoggedIn, async (req, res) => {
   }
 });
 
-// Edit user profile (GET)
-router.get('/edit', isLoggedIn, async (req, res) => {
-  res.render('users/edit_profile', { user: req.user });
-});
-
 // Show feedbacks given by the user
 router.get('/myfeedbacks', isLoggedIn, async (req, res) => {
   try {
-    const feedbacks = await Feedback.find({ user: req.user._id }).populate('user').populate('portfolio');
+    const feedbacks = await Feedback.find({ user: req.user._id }).populate('user').populate({ path: 'portfolio', populate: { path: 'user' } });
     res.render('users/my_feedbacks', { feedbacks });
   } catch (err) {
     console.error(err);
     req.flash('error', 'Error fetching your feedbacks.');
+    res.redirect('/profile');
+  }
+});
+
+// Show all portfolios given by the user
+router.get('/myportfolios', isLoggedIn, async (req, res) => {
+  try {
+    const portfolios = await Portfolio.find({ user: req.user._id }).populate('user');
+    res.render('users/my_portfolios', { portfolios });
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'Error fetching your portfolios.');
     res.redirect('/profile');
   }
 });
@@ -62,6 +69,7 @@ router.put('/', isLoggedIn, upload.single('dp'),
   [
     body('username').trim().notEmpty().withMessage('Username cannot be empty.'),
     body('fullName').trim().escape(),
+    body('email').isEmail().withMessage('Please enter a valid email address.'),
   ],
   async (req, res) => {
     console.log('req.body:', req.body);
@@ -71,7 +79,7 @@ router.put('/', isLoggedIn, upload.single('dp'),
       for (let error of errors.array()) {
         req.flash('error', error.msg);
       }
-      return res.redirect('/profile/edit');
+      return res.redirect('/profile'); // Redirect to main profile page on error
     }
 
     try {
@@ -86,15 +94,30 @@ router.put('/', isLoggedIn, upload.single('dp'),
         const existingUser = await User.findOne({ username: req.body.username });
         if (existingUser && existingUser._id.toString() !== user._id.toString()) {
           req.flash('error', 'Username already taken.');
-          return res.redirect('/profile/edit');
+          return res.redirect('/profile'); // Redirect to main profile page on error
         }
         user.username = req.body.username;
       }
 
       // Update full name
-    if ('fullName' in req.body) {
-      user.fullName = req.body.fullName;
-    }
+      if ('fullName' in req.body) {
+        user.fullName = req.body.fullName;
+      }
+
+      // Update email if provided and unique
+      if (req.body.email && req.body.email !== user.email) {
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+          req.flash('error', 'Email already taken.');
+          return res.redirect('/profile'); // Redirect to main profile page on error
+        }
+        user.email = req.body.email;
+      }
+
+      // Update password if provided
+      if (req.body.password) {
+        await user.setPassword(req.body.password); // Passport-local-mongoose method
+      }
 
       // Update DP if a new file is uploaded
       if (req.file) {
@@ -115,9 +138,49 @@ router.put('/', isLoggedIn, upload.single('dp'),
       } else {
         req.flash('error', 'Error updating profile: ' + err.message);
       }
-      res.redirect('/profile/edit');
+      res.redirect('/profile'); // Redirect to main profile page on error
     }
   }
 );
+
+// Delete user profile
+router.delete('/', isLoggedIn, async (req, res) => {
+  try {
+    // Find the user
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/profile');
+    }
+
+    // Delete all portfolios created by the user
+    await Portfolio.deleteMany({ user: user._id });
+
+    // Delete all feedbacks given by the user
+    await Feedback.deleteMany({ user: user._id });
+
+    // Delete all feedbacks on portfolios owned by the user
+    // This requires iterating through portfolios and pulling feedbacks
+    const usersPortfolios = await Portfolio.find({ user: user._id });
+    for (let portfolio of usersPortfolios) {
+      await Feedback.deleteMany({ portfolio: portfolio._id });
+    }
+
+    // Delete the user account
+    await User.findByIdAndDelete(user._id);
+
+    // Log out the user
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      req.flash('success', 'Your account has been deleted.');
+      res.redirect('/');
+    });
+
+  } catch (err) {
+    console.error('Account deletion error:', err);
+    req.flash('error', 'Error deleting account: ' + err.message);
+    res.redirect('/profile');
+  }
+});
 
 module.exports = router;
