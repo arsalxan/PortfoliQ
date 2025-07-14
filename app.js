@@ -7,11 +7,18 @@ const methodOverride = require('method-override');
 const path = require('path');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const cron = require('node-cron');
+const User = require('./models/user');
+const cleanupUnverifiedUsers = require('./cleanup_unverified_users');
 require('dotenv').config();
 
-const User = require('./models/user');
-
 const app = express();
+
+// Schedule cleanup of unverified users (e.g., every 24 hours at midnight)
+cron.schedule('*/30 * * * *', () => {
+  console.log('Running scheduled cleanup of unverified users...');
+  cleanupUnverifiedUsers();
+});
 
 const engine = require('ejs-mate');
 

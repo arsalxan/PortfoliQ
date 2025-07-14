@@ -26,7 +26,15 @@ router.post('/register',
       .trim()
       .isLength({ min: 3 }).withMessage('Username must be at least 3 characters long.')
       .matches(/^[a-z0-9_]+$/).withMessage('Username can only contain lowercase letters, numbers, and underscores.'),
-    body('email').isEmail().withMessage('Please enter a valid email address.'),
+    body('email').isEmail().withMessage('Please enter a valid email address.')
+      .custom(value => {
+        const allowedEmailDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'aol.com', 'protonmail.com', 'icloud.com', 'mail.com', 'zoho.com', 'yandex.com', 'gmx.com', 'live.com'];
+        const emailDomain = value.split('@')[1];
+        if (!allowedEmailDomains.includes(emailDomain)) {
+          throw new Error('Only popular email providers are allowed for registration.');
+        }
+        return true;
+      }),
     body('fullName').trim().notEmpty().withMessage('Full Name cannot be empty.'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.')
       .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
