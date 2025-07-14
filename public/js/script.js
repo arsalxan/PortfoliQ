@@ -49,14 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     registrationForm.addEventListener('submit', function (event) {
-      console.log('Form submit event triggered.');
-      console.log('this.checkValidity():', this.checkValidity());
       if (!this.checkValidity()) {
-        console.log('Preventing default form submission.');
         event.preventDefault();
         event.stopPropagation();
       }
-      console.log('event.defaultPrevented:', event.defaultPrevented);
       this.classList.add('was-validated');
     });
   }

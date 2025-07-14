@@ -30,7 +30,7 @@
                                 <i class="fas fa-comments me-1"></i> <%= portfolio.feedbackCount %>
                             </a>
                         </div>
-                        <p class="card-subtitle text-secondary mb-2">by <small class="text-muted"><%= portfolio.user.username %></small></p>
+                        <p class="card-subtitle text-secondary mb-2">by <small class="text-muted"><span class="username-display"><%= portfolio.user.username %></span></small></p>
                         <p class="card-text text-truncate-2-lines flex-grow-1">
                             <% if (portfolio.description) { %>
                                 <%= portfolio.description %>

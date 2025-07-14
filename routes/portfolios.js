@@ -53,30 +53,19 @@ router.post('/', isLoggedIn, upload.single('screenshot'),
       return res.redirect('/portfolios/new');
     }
 
-    const portfolio = new Portfolio(req.body.portfolio);
-    portfolio.user = req.user._id;
+    const newPortfolioData = { ...req.body.portfolio };
+    newPortfolioData.user = req.user._id;
     if (req.file) {
-      portfolio.screenshot = '/uploads/' + req.file.filename;
+      newPortfolioData.screenshot = '/uploads/' + req.file.filename;
     }
-    if (req.body.portfolio.gitRepo) {
-      portfolio.gitRepo = req.body.portfolio.gitRepo;
-    }
+    const portfolio = new Portfolio(newPortfolioData);
     await portfolio.save();
     req.flash('success', 'Successfully added your portfolio!');
-    res.redirect(`/portfolios/${portfolio._id}`);
+    res.redirect('/dashboard');
   }
 );
 
-// Show
-router.get('/:id', async (req, res) => {
-  const portfolio = await Portfolio.findById(req.params.id).populate('user');
-  if (!portfolio) {
-    req.flash('error', 'Cannot find that portfolio!');
-    return res.redirect('/portfolios');
-  }
-  const feedbacks = await Feedback.find({ portfolio: req.params.id }).populate('user');
-  res.render('portfolios/show', { portfolio, feedbacks });
-});
+
 
 // Edit
 router.get('/:id/edit', isLoggedIn, async (req, res) => {
@@ -105,14 +94,11 @@ router.put('/:id', isLoggedIn, upload.single('screenshot'),
     }
 
     const { id } = req.params;
-    const portfolio = await Portfolio.findByIdAndUpdate(id, { ...req.body.portfolio });
+    const updateData = { ...req.body.portfolio };
     if (req.file) {
-      portfolio.screenshot = '/uploads/' + req.file.filename;
+      updateData.screenshot = '/uploads/' + req.file.filename;
     }
-    if (req.body.portfolio.gitRepo) {
-      portfolio.gitRepo = req.body.portfolio.gitRepo;
-    }
-    await portfolio.save();
+    const portfolio = await Portfolio.findByIdAndUpdate(id, updateData, { new: true });
     req.flash('success', 'Successfully updated your portfolio!');
     res.redirect(`/portfolios/${portfolio._id}`);
   }

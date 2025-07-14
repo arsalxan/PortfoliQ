@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const Portfolio = require('../models/portfolio');
 const Feedback = require('../models/feedback');
-const User = require('../models/user'); // Import User model
 const { isLoggedIn } = require('../middleware');
 const { body, validationResult } = require('express-validator');
 
@@ -72,7 +71,6 @@ router.post('/', isLoggedIn,
     feedback.user = req.user._id;
     feedback.portfolio = portfolio._id;
     await feedback.save();
-    await portfolio.save();
     req.flash('success', 'Successfully added your feedback!');
     res.redirect(`/portfolios/${portfolio._id}/feedbacks`); // Redirect to the feedbacks index page
   }

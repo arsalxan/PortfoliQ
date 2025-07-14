@@ -561,3 +561,8 @@ label {
         margin-bottom: 20px;
     }
 }
+
+.username-display {
+    color: #000000; /* Darker color for username */
+    font-weight: 600; /* Make it bold */
+}

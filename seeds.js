@@ -5,8 +5,8 @@ const Feedback = require('./models/feedback');
 require('dotenv').config();
 
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB Connected"))
-    .catch(err => console.error("❌ MongoDB Connection Error", err));
+    .then(() => console.log("MongoDB Connected"))
+    .catch(err => console.error("MongoDB Connection Error", err));
 
 const usersData = [
     { username: 'john_doe', email: 'john@example.com', fullName: 'John Doe', dp: '/images/default-dp.svg' },
@@ -92,7 +92,6 @@ const seedDB = async () => {
                 content: randomComment,
                 design: `Design feedback ${i + 1}`,
                 responsiveness: `Responsiveness feedback ${i + 1}`,
-                content: randomComment,
                 ux_flow: `UX flow feedback ${i + 1}`,
                 accessibility: `Accessibility feedback ${i + 1}`,
                 technical_performance: `Performance feedback ${i + 1}`,

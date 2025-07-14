@@ -8,11 +8,13 @@
                     <h3>Feedback for <%= portfolio.user.fullName %>'s Portfolio</h3>
                 </div>
                 <div class="card-body text-center">
-                    <% if (portfolio.screenshot) { %>
-                        <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
-                    <% } else { %>
-                        <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
-                    <% } %>
+                    <a href="<%= portfolio.url %>">
+                        <% if (portfolio.screenshot) { %>
+                            <img src="<%= portfolio.screenshot %>" alt="Portfolio Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
+                        <% } else { %>
+                            <img src="/images/defaultscreenshot.svg" alt="Default Screenshot" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
+                        <% } %>
+                    </a>
                     <p class="text-muted"><%= portfolio.description %></p>
                 </div>
             </div>
@@ -21,7 +23,7 @@
                     <% feedbacks.forEach(feedback => { %>
                     <div class="card mb-3 feedback-card">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-secondary">by <%= feedback.user.username %></h6>
+                            <h6 class="card-subtitle mb-2 text-secondary">by <span class="username-display"><%= feedback.user.username %></span></h6>
                             <% if (feedback.design) { %><p class="card-text"><strong>Design:</strong> <%= feedback.design %></p><% } %>
                             <% if (feedback.responsiveness) { %><p class="card-text"><strong>Responsiveness:</strong> <%= feedback.responsiveness %></p><% } %>
                             <% if (feedback.content) { %><p class="card-text"><strong>Content:</strong> <%= feedback.content %></p><% } %>

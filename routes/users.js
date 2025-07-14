@@ -6,6 +6,9 @@ const Portfolio = require('../models/portfolio');
 const Feedback = require('../models/feedback');
 const { isLoggedIn } = require('../middleware');
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Landing Page
 router.get('/', (req, res) => {
@@ -26,7 +29,7 @@ router.post('/register',
     body('email').isEmail().withMessage('Please enter a valid email address.'),
     body('fullName').trim().notEmpty().withMessage('Full Name cannot be empty.'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.')
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/)
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
       .withMessage('Password must contain at least one uppercase letter, one number, and one special character.'),
   ],
   async (req, res, next) => {
@@ -40,13 +43,35 @@ router.post('/register',
 
     try {
       const { username, email, fullName, password } = req.body;
-      const user = new User({ username, email, fullName });
-      const registeredUser = await User.register(user, password);
-      req.login(registeredUser, err => {
-        if (err) return next(err);
-        req.flash('success', 'Welcome to the Portfolio Feedback Platform!');
-        res.redirect('/portfolios');
+
+      // Generate verification token
+      const token = crypto.randomBytes(20).toString('hex');
+      const tokenExpires = Date.now() + 3600000; // 1 hour from now
+
+      const user = new User({
+        username,
+        email,
+        fullName,
+        emailVerificationToken: token,
+        emailVerificationTokenExpires: tokenExpires
       });
+
+      const registeredUser = await User.register(user, password);
+
+      // Send verification email
+      const verificationUrl = `http://${req.headers.host}/verify-email/${token}`;
+      const msg = {
+        to: email,
+        from: process.env.SENDGRID_VERIFIED_SENDER_EMAIL,
+        subject: 'Verify Your Email for PortfolioQue',
+        text: `You are receiving this because you (or someone else) have registered an account on PortfoliQue. Please click on the following link, or paste this into your browser to complete the process:\n\n${verificationUrl}\n\nIf you did not request this, please ignore this email.\n`,
+        html: `<p>You are receiving this because you (or someone else) have registered an account on PortfoliQue.</p><p>Please click on the following link, or paste this into your browser to complete the process:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p><p>If you did not request this, please ignore this email.</p>`,
+      };
+
+      await sgMail.send(msg);
+
+      req.flash('success', 'Welcome to PortfolioQue!<br> <strong>A verification email has been sent to your email address. Please check your inbox (and spam folder) to verify your account.</strong>');
+      res.redirect('/login'); // Redirect to login after registration for email verification
     } catch (e) {
       if (e.name === 'UserExistsError') {
         req.flash('error', 'Username already taken, try a new one');
@@ -68,9 +93,17 @@ router.get('/login', (req, res) => {
 router.post('/login', passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: true
-}), (req, res) => {
-  req.flash('success', 'Welcome back!');
-  res.redirect('/portfolios');
+}), (req, res, next) => {
+  if (!req.user.isEmailVerified) {
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      req.flash('error', 'Please verify your email address before logging in. Check your inbox for a verification link.');
+      return res.redirect('/login');
+    });
+  } else {
+    req.flash('success', 'Welcome back!');
+    res.redirect('/portfolios');
+  }
 });
 
 // Logout
@@ -83,6 +116,34 @@ router.post('/logout', (req, res, next) => {
             res.redirect('/portfolios');
         });
     });
+});
+
+// Email Verification Route
+router.get('/verify-email/:token', async (req, res) => {
+  try {
+    const user = await User.findOne({
+      emailVerificationToken: req.params.token,
+      emailVerificationTokenExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      req.flash('error', 'Email verification token is invalid or has expired.');
+      return res.redirect('/register'); // Or wherever you want them to go
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpires = undefined;
+    await user.save();
+
+    req.flash('success', 'Your email has been successfully verified! You can now log in.');
+    res.redirect('/login');
+
+  } catch (e) {
+    console.error(e);
+    req.flash('error', 'An error occurred during email verification.');
+    res.redirect('/register'); // Or wherever you want them to go
+  }
 });
 
 // Dashboard

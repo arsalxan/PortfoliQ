@@ -30,7 +30,7 @@ if (!fs.existsSync(dpUploadsDir)) {
 // Show user profile
 router.get('/', isLoggedIn, async (req, res) => {
   try {
-    const userPortfolios = await Portfolio.find({ user: req.user._id }).limit(4);
+    const userPortfolios = await Portfolio.find({ user: req.user._id }).limit(3);
     const userFeedbacks = await Feedback.find({ user: req.user._id }).populate('portfolio').limit(3);
     res.render('users/profile', { user: req.user, userPortfolios, userFeedbacks, isProfilePage: true });
   } catch (err) {
@@ -157,18 +157,7 @@ router.delete('/', isLoggedIn, async (req, res) => {
       return res.redirect('/profile');
     }
 
-    // Delete all portfolios created by the user
-    await Portfolio.deleteMany({ user: user._id });
-
-    // Delete all feedbacks given by the user
-    await Feedback.deleteMany({ user: user._id });
-
-    // Delete all feedbacks on portfolios owned by the user
-    // This requires iterating through portfolios and pulling feedbacks
-    const usersPortfolios = await Portfolio.find({ user: user._id });
-    for (let portfolio of usersPortfolios) {
-      await Feedback.deleteMany({ portfolio: portfolio._id });
-    }
+    
 
     // Delete the user account
     await User.findByIdAndDelete(user._id);

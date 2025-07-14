@@ -23,7 +23,7 @@
 
                     <hr>
 
-                    <h5 class="mb-3">Feedback from <%= feedback.user.username %></h5>
+                    <h5 class="mb-3">Feedback from <span class="username-display"><%= feedback.user.username %></span></h5>
                     <ul class="list-group list-group-flush mb-4">
                         <% if (feedback.design) { %><li class="list-group-item"><strong>Design:</strong> <%= feedback.design %></li><% } %>
                         <% if (feedback.responsiveness) { %><li class="list-group-item"><strong>Responsiveness:</strong> <%= feedback.responsiveness %></li><% } %>
