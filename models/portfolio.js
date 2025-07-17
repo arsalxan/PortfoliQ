@@ -21,6 +21,7 @@ const portfolioSchema = new mongoose.Schema({
 portfolioSchema.post('findOneAndDelete', async function (doc) {
   if (doc) {
     await Feedback.deleteMany({ portfolio: doc._id });
+    console.log(res);
   }
 });
 
