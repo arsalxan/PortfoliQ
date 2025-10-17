@@ -23,4 +23,8 @@ router.get('/verify-email/:token', users.verifyEmail);
 
 router.get('/dashboard', isLoggedIn, users.renderDashboard);
 
+router.get('/notifications', isLoggedIn, users.renderNotifications);
+
+router.get('/notifications/redirect/:notification_id', isLoggedIn, users.redirectToNotification);
+
 module.exports = router;

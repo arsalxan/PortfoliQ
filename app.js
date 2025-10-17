@@ -9,6 +9,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const cron = require('node-cron');
 const User = require('./models/user');
+const Notification = require('./models/notification');
 const cleanupUnverifiedUsers = require('./cleanup_unverified_users');
 require('dotenv').config();
 
@@ -47,8 +48,24 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Global variables
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   res.locals.currentUser = req.user;
+  if (req.user) {
+    try {
+      const notifications = await Notification.find({ recipient: req.user._id, isRead: false })
+        .sort({ createdAt: -1 })
+        .populate('sender');
+      res.locals.notifications = notifications;
+      res.locals.notificationCount = notifications.length;
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+      res.locals.notifications = [];
+      res.locals.notificationCount = 0;
+    }
+  } else {
+    res.locals.notifications = [];
+    res.locals.notificationCount = 0;
+  }
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();

@@ -1,10 +1,10 @@
 const User = require('../models/user');
 const Portfolio = require('../models/portfolio');
 const Feedback = require('../models/feedback');
+const Notification = require('../models/notification');
 const passport = require('passport');
 const crypto = require('crypto');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const SibApiV3Sdk = require('@getbrevo/brevo');
 
 module.exports.renderLanding = (req, res) => {
     res.render('landing');
@@ -34,15 +34,23 @@ module.exports.register = async (req, res, next) => {
 
       // Send verification email
       const verificationUrl = `http://${req.headers.host}/verify-email/${token}`;
-      const msg = {
-        to: email,
-        from: process.env.SENDGRID_VERIFIED_SENDER_EMAIL,
-        subject: 'Verify Your Email for PortfolioQue',
-        text: `You are receiving this because you (or someone else) have registered an account on PortfoliQue. Please click on the following link, or paste this into your browser to complete the process:\n\n${verificationUrl}\n\nIf you did not request this, please ignore this email.\n`,
-        html: `<p>You are receiving this because you (or someone else) have registered an account on PortfoliQue.</p><p>Please click on the following link, or paste this into your browser to complete the process:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p><p>If you did not request this, please ignore this email.</p>`,
-      };
+      
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-      await sgMail.send(msg);
+      sendSmtpEmail.subject = "Verify Your Email for PortfolioQue";
+      sendSmtpEmail.htmlContent = `<p>You are receiving this because you (or someone else) have registered an account on PortfoliQue.</p><p>Please click on the following link, or paste this into your browser to complete the process:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p><p>If you did not request this, please ignore this email.</p>`;
+      sendSmtpEmail.sender = { name: 'PortfoliQ', email: process.env.BREVO_SENDER_EMAIL };
+      sendSmtpEmail.to = [{ email: email }];
+
+      try {
+        await apiInstance.sendTransacEmail(sendSmtpEmail);
+      } catch (error) {
+        console.error(error);
+        req.flash('error', 'There was an error sending the verification email. Please try again later.');
+        return res.redirect('register');
+      }
 
       req.flash('success', 'Welcome to PortfolioQue! A verification email has been sent to your email address. Please check your inbox (and spam folder) to verify your account.');
       res.redirect('/login'); // Redirect to login after registration for email verification
@@ -57,7 +65,6 @@ module.exports.register = async (req, res, next) => {
       res.redirect('register');
     }
 };
-
 module.exports.renderLogin = (req, res) => {
   res.render('users/login');
 };
@@ -120,4 +127,41 @@ module.exports.renderDashboard = async (req, res) => {
   const portfolios = await Portfolio.find({ user: req.user._id }).populate('user').sort({ createdAt: -1 }).limit(3);
   const feedbacks = await Feedback.find({ user: req.user._id }).populate({ path: 'portfolio', populate: { path: 'user' } }).sort({ createdAt: -1 }).limit(3);
   res.render('dashboard', { portfolios, feedbacks });
+};
+
+module.exports.renderNotifications = async (req, res) => {
+    try {
+        const notifications = await Notification.find({ recipient: req.user._id })
+            .sort({ createdAt: -1 })
+            .populate('sender', 'username')
+            .populate('portfolio', 'title');
+
+        // Mark all as read
+        await Notification.updateMany({ recipient: req.user._id, isRead: false }, { isRead: true });
+
+        res.render('users/notifications', { notifications });
+    } catch (err) {
+        console.error('Error fetching notifications page:', err);
+        req.flash('error', 'Something went wrong while fetching your notifications.');
+        res.redirect('/dashboard');
+    }
+};
+
+module.exports.redirectToNotification = async (req, res) => {
+    try {
+        const notification = await Notification.findById(req.params.notification_id);
+        if (!notification || !notification.recipient.equals(req.user._id)) {
+            req.flash('error', 'Notification not found.');
+            return res.redirect('/notifications');
+        }
+
+        notification.isRead = true;
+        await notification.save();
+
+        res.redirect(`/portfolios/${notification.portfolio}/feedbacks`);
+    } catch (err) {
+        console.error('Error handling notification redirect:', err);
+        req.flash('error', 'Something went wrong.');
+        res.redirect('/dashboard');
+    }
 };

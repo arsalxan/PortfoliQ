@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 const Portfolio = require('./portfolio'); // Import Portfolio model
 const Feedback = require('./feedback'); // Import Feedback model here to avoid circular dependency
+const Notification = require('./notification');
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -37,6 +38,7 @@ userSchema.post('findOneAndDelete', async function (doc) {
     await Portfolio.deleteMany({ user: doc._id });
     // Also delete all feedback given by this user
     await Feedback.deleteMany({ user: doc._id });
+    await Notification.deleteMany({ $or: [{ sender: doc._id }, { recipient: doc._id }] });
   }
 });
 

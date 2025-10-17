@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Feedback = require('../models/feedback');
 const Portfolio = require('../models/portfolio');
+const Notification = require('../models/notification');
 const multer = require('multer');
 const { storage } = require('../utils/cloudinaryConfig');
 const upload = multer({ storage });
@@ -10,7 +11,7 @@ module.exports.upload = upload;
 module.exports.showProfile = async (req, res) => {
   try {
     const userPortfolios = await Portfolio.find({ user: req.user._id }).limit(3);
-    const userFeedbacks = await Feedback.find({ user: req.user._id }).populate('portfolio').limit(3);
+    const userFeedbacks = await Feedback.find({ user: req.user._id }).populate({ path: 'portfolio', populate: { path: 'user' } }).limit(3);
     res.render('users/profile', { user: req.user, userPortfolios, userFeedbacks, isProfilePage: true });
   } catch (err) {
     console.error('Error fetching profile data:', err);
@@ -113,6 +114,15 @@ module.exports.deleteProfile = async (req, res, next) => {
       req.flash('error', 'User not found.');
       return res.redirect('/profile');
     }
+
+    // Delete user's portfolios
+    await Portfolio.deleteMany({ user: user._id });
+
+    // Delete user's feedbacks
+    await Feedback.deleteMany({ user: user._id });
+
+    // Delete notifications where the user is the sender or recipient
+    await Notification.deleteMany({ $or: [{ sender: user._id }, { recipient: user._id }] });
 
     await User.findByIdAndDelete(user._id);
 

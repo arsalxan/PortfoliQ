@@ -1,0 +1,20 @@
+<% layout('layouts/main') -%>
+
+<div class="container mt-4">
+    <h1 class="mb-4">AI Review</h1>
+
+    <% if (analysis.error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= analysis.error %>
+        </div>
+    <% } else { %>
+        <div class="card">
+            <div class="card-header">
+                AI Review
+            </div>
+            <div class="card-body">
+                <%- marked(aiReview) %>
+            </div>
+        </div>
+    <% } %>
+</div>

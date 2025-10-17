@@ -18,6 +18,29 @@
         <li class="nav-item">
           <a class="nav-link" href="/dashboard">Dashboard</a>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell"></i>
+            <% if (notificationCount > 0) { %>
+              <span class="badge bg-danger"><%= notificationCount %></span>
+            <% } %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <% if (notifications && notifications.length > 0) { %>
+              <% notifications.forEach(notification => { %>
+                <li>
+                    <a class="dropdown-item" href="/notifications/redirect/<%= notification._id %>">
+                      <%= notification.sender.username %> commented on your portfolio.
+                    </a>
+                  </li>
+              <% }) %>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-center" href="/notifications">View all</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item" href="#">No new notifications</a></li>
+            <% } %>
+          </ul>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="/profile">My Profile</a>
         </li>
@@ -35,3 +58,55 @@
     </ul>
   </div>
 </nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+    navLinks.forEach(link => {
+      const linkPath = new URL(link.href).pathname;
+      if (linkPath === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const dropdownItems = document.querySelectorAll('.navbar-nav .dropdown-item');
+
+    function setActive(element) {
+      if (element.href) {
+        const linkPath = new URL(element.href).pathname;
+        if (linkPath === currentPath) {
+          element.classList.add('active');
+        }
+      }
+    }
+
+    navLinks.forEach(setActive);
+    dropdownItems.forEach(setActive);
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const dropdownItems = document.querySelectorAll('.navbar-nav .dropdown-item');
+
+    function setActive(element) {
+      try {
+        const linkPath = new URL(element.href).pathname;
+        if (linkPath === currentPath) {
+          element.classList.add('active');
+        }
+      } catch
+    }
+
+    navLinks.forEach(setActive);
+    dropdownItems.forEach(setActive);
+  });
+</script>

@@ -1,7 +1,10 @@
 const Portfolio = require('../models/portfolio');
 const Feedback = require('../models/feedback');
+const { GoogleGenAI } = require('@google/genai');
 const multer = require('multer');
+const { marked } = require('marked');
 const { storage } = require('../utils/cloudinaryConfig');
+const { analyzePortfolio } = require('../utils/portfolioAnalyzer');
 const upload = multer({ storage });
 
 module.exports.upload = upload;
@@ -52,11 +55,62 @@ module.exports.updatePortfolio = async (req, res) => {
   }
   const portfolio = await Portfolio.findByIdAndUpdate(id, updateData, { new: true });
   req.flash('success', 'Successfully updated your portfolio!');
-  res.redirect(`/portfolios/${portfolio._id}`);
+  res.redirect(`/portfolios/${portfolio._id}/edit`);
 };
 
 module.exports.deletePortfolio = async (req, res) => {
   await Portfolio.findByIdAndDelete(req.params.id);
   req.flash('success', 'Successfully deleted your portfolio!');
   res.redirect('/portfolios');
+};
+
+module.exports.getAiReview = async (req, res) => {
+    const portfolio = await Portfolio.findById(req.params.id);
+    if (!portfolio) {
+        req.flash('error', 'Cannot find that portfolio!');
+        return res.redirect('/portfolios');
+    }
+
+    const analysis = await analyzePortfolio(portfolio.url);
+
+    if (analysis.error) {
+        req.flash('error', analysis.error);
+        return res.redirect('/portfolios');
+    }
+
+    const genAI = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+
+    const prompt = `
+        You are an expert web developer and designer, tasked with providing a professional review of a portfolio website.
+        Analyze the following data extracted from the user's portfolio URL:
+
+        **Page Title:** ${analysis.title}
+        **Links:** ${JSON.stringify(analysis.links, null, 2)}
+        **Images:** ${JSON.stringify(analysis.images, null, 2)}
+
+        Based on this information, please provide a comprehensive review of the portfolio. Your review should be broken down into the following sections:
+
+        **1. Overall Impression:** Provide a brief, overall impression of the portfolio.
+        **2. Page Title Analysis:** Analyze the page title for clarity, conciseness, and SEO-friendliness.
+        **3. Link Analysis:** Analyze the links for any broken links, unclear link text, or other issues.
+        **4. Image Analysis:** Analyze the images for any missing alt text, large file sizes, or other issues.
+        **5. Suggestions for Improvement:** Provide a list of actionable suggestions for how the user can improve their portfolio.
+
+        Your review should be professional, constructive, and easy to understand. Use markdown for formatting.
+    `;
+
+    let aiReview = 'No AI review available.';
+    try {
+        const result = await genAI.models.generateContent({
+          model: 'gemini-2.0-flash-001',
+         contents: prompt,
+        });
+        aiReview = result.text;
+    } catch (error) {
+        console.error('Error generating AI review:', error);
+        req.flash('error', 'There was an error generating the AI review. Please try again later.');
+        return res.redirect('/portfolios');
+    }
+
+    res.render('portfolios/ai_review', { analysis, aiReview, marked });
 };

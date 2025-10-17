@@ -13,4 +13,6 @@ router.route('/:feedbackId')
   .get(feedbacks.showFeedback)
   .delete(isLoggedIn, feedbacks.deleteFeedback);
 
+router.get('/:feedbackId/summarize', feedbacks.summarizeFeedback);
+
 module.exports = router;

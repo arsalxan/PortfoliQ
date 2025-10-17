@@ -42,11 +42,15 @@
                             <a href="/portfolios/<%= portfolio._id %>/edit" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
                                 <i class="fas fa-edit me-1"></i> Edit
                             </a>
-                            <form action="/portfolios/<%= portfolio._id %>?_method=DELETE" method="POST" class="d-inline">
-                                <button class="btn btn-danger btn-sm d-flex align-items-center">
-                                    <i class="fas fa-trash-alt me-1"></i> Delete
-                                </button>
-                            </form>
+                            <a href="/portfolios/<%= portfolio._id %>/ai-review" class="btn btn-info btn-sm d-flex align-items-center">
+                                <i class="fas fa-robot me-1"></i> AI Review
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm d-flex align-items-center" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal" 
+                                    data-delete-url="/portfolios/<%= portfolio._id %>?_method=DELETE">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -69,7 +73,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm portfolio-card">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold mb-2">Feedback for <%= feedback.portfolio.user.fullName %>'s Portfolio</h5>
+                        <h5 class="card-title fw-bold mb-2">Feedback for <% if (feedback.portfolio && feedback.portfolio.user) { %><%= feedback.portfolio.user.fullName %><% } else { %>a deleted user's portfolio<% } %>'s Portfolio</h5>
                         <p class="card-text text-truncate-2-lines flex-grow-1">
                             <% 
                                 let summaryText = '<span class="text-muted">No general comments provided.</span>';
@@ -92,9 +96,15 @@
                             <%= summaryText %>
                         </p>
                         <div class="mt-auto pt-3 d-flex flex-wrap justify-content-end gap-2">
-                            <a href="/portfolios/<%= feedback.portfolio._id %>/feedbacks/<%= feedback._id %>" class="btn btn-primary btn-sm d-flex align-items-center">
+                            <a href="/portfolios/<% if (feedback.portfolio) { %><%= feedback.portfolio._id %><% } else { %>deleted-portfolio<% } %>/feedbacks/<%= feedback._id %>" class="btn btn-primary btn-sm d-flex align-items-center">
                                 <i class="fas fa-eye me-1"></i> View Feedback
                             </a>
+                            <button type="button" class="btn btn-danger btn-sm d-flex align-items-center" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal" 
+                                    data-delete-url="/portfolios/<% if (feedback.portfolio) { %><%= feedback.portfolio._id %><% } else { %>deleted-portfolio<% } %>/feedbacks/<%= feedback._id %>?_method=DELETE">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
                         </div>
                     </div>
                 </div>

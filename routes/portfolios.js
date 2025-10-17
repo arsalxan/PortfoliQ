@@ -17,4 +17,6 @@ router.route('/:id')
 
 router.get('/:id/edit', isLoggedIn, portfolios.renderEditForm);
 
+router.get('/:id/ai-review', isLoggedIn, portfolios.getAiReview);
+
 module.exports = router;

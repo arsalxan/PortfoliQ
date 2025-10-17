@@ -1,0 +1,27 @@
+<% layout('layouts/main') %>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Notifications</h1>
+
+    <div class="list-group">
+        <% if (notifications && notifications.length > 0) { %>
+            <% notifications.forEach(notification => { %>
+                <% if (notification.sender && notification.portfolio) { %>
+                <a href="/portfolios/<%= notification.portfolio._id %>/feedbacks" class="list-group-item list-group-item-action <%= !notification.isRead ? 'list-group-item-light' : '' %>">
+                    <div class="d-flex w-100 justify-content-between">
+                        <p class="mb-1">
+                            <strong class="text-primary"><%= notification.sender.username %></strong> commented on your portfolio: 
+                            <strong><%= notification.portfolio.title ? notification.portfolio.title : 'Untitled Portfolio' %></strong>.
+                        </p>
+                        <small class="text-muted"><%= new Date(notification.createdAt).toLocaleString() %></small>
+                    </div>
+                </a>
+                <% } %>
+            <% }) %>
+        <% } else { %>
+            <div class="text-center mt-5">
+                <p class="lead">You have no notifications.</p>
+            </div>
+        <% } %>
+    </div>
+</div>

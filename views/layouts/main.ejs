@@ -45,6 +45,39 @@
     </div>
   </div>
 </div>
+
+<!-- Generic Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-black">
+        Are you sure you want to delete this item? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteConfirmForm" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+  if (deleteConfirmModal) {
+    deleteConfirmModal.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget;
+      const deleteUrl = button.getAttribute('data-delete-url');
+      const deleteForm = document.getElementById('deleteConfirmForm');
+      deleteForm.setAttribute('action', deleteUrl);
+    });
+  }
+</script>
   <script>
     (function () {
       'use strict'

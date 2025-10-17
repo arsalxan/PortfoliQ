@@ -191,6 +191,20 @@ p {
     border-color: var(--primary-hover);
 }
 
+.btn-outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+
 .btn-outline-secondary {
     border-color: var(--border);
     color: var(--text-secondary);
@@ -565,4 +579,62 @@ label {
 .username-display {
     color: #000000; /* Darker color for username */
     font-weight: 600; /* Make it bold */
+}
+
+.feedback-page-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.portfolio-card-container {
+    position: sticky;
+    top: 80px;
+    width: 40%;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding-right: 20px;
+}
+
+.feedbacks-container {
+    width: 60%;
+    padding-left: 20px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .feedback-page-container {
+        flex-direction: column;
+    }
+
+    .portfolio-card-container {
+        width: 100%;
+        position: static;
+        height: auto;
+        overflow-y: visible;
+        padding-right: 0;
+        padding-left: 0;
+        max-height: 40vh;
+        overflow-y: auto;
+    }
+
+    .feedbacks-container {
+        width: 100%;
+        height: 50vh; /* Adjust this value as needed */
+        overflow-y: auto;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .portfolio-card-container .card-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .portfolio-card-container .card-body img {
+        max-height: 150px;
+    }
+
+    .portfolio-card-container .card-body .text-muted {
+        font-size: 0.9rem;
+    }
 }

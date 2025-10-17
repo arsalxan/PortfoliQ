@@ -47,9 +47,18 @@
                                     <i class="fab fa-github me-1"></i> Git Repo
                                 </a>
                             <% } %>
-                            <a href="/portfolios/<%= portfolio._id %>/feedbacks/new" class="btn btn-primary btn-sm d-flex align-items-center">
-                                <i class="fas fa-comment-dots me-1"></i> Give Feedback
+                            <a href="/portfolios/<%= portfolio._id %>/edit" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                                <i class="fas fa-edit me-1"></i> Edit
                             </a>
+                            <a href="/portfolios/<%= portfolio._id %>/ai-review" class="btn btn-info btn-sm d-flex align-items-center">
+                                <i class="fas fa-robot me-1"></i> AI Review
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm d-flex align-items-center" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal" 
+                                    data-delete-url="/portfolios/<%= portfolio._id %>?_method=DELETE">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
                         </div>
                     </div>
                 </div>
