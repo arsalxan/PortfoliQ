@@ -4,6 +4,7 @@ const { GoogleGenAI } = require('@google/genai');
 const multer = require('multer');
 const { marked } = require('marked');
 const { portfolioStorage } = require('../utils/cloudinaryConfig');
+const { analyzePortfolio } = require('../utils/portfolioAnalyzer.js');
 const upload = multer({ storage: portfolioStorage });
 
 module.exports.upload = upload;
