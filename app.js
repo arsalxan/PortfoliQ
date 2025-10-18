@@ -54,9 +54,11 @@ app.use(async (req, res, next) => {
     try {
       const notifications = await Notification.find({ recipient: req.user._id, isRead: false })
         .sort({ createdAt: -1 })
+        .limit(5)
         .populate('sender');
+      const notificationCount = await Notification.countDocuments({ recipient: req.user._id, isRead: false });
       res.locals.notifications = notifications;
-      res.locals.notificationCount = notifications.length;
+      res.locals.notificationCount = notificationCount;
     } catch (err) {
       console.error('Error fetching notifications:', err);
       res.locals.notifications = [];
@@ -80,6 +82,9 @@ app.use('/', userRoutes);
 app.use('/portfolios', portfolioRoutes);
 app.use('/portfolios/:id/feedbacks', feedbackRoutes);
 app.use('/profile', profileRoutes);
+
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
 
 
 

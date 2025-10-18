@@ -18,28 +18,18 @@
         <li class="nav-item">
           <a class="nav-link" href="/dashboard">Dashboard</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <% if (currentUser.role === 'admin') { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+          </li>
+        <% } %>
+        <li class="nav-item">
+          <a class="nav-link" href="/notifications">
             <i class="fas fa-bell"></i>
             <% if (notificationCount > 0) { %>
               <span class="badge bg-danger"><%= notificationCount %></span>
             <% } %>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <% if (notifications && notifications.length > 0) { %>
-              <% notifications.forEach(notification => { %>
-                <li>
-                    <a class="dropdown-item" href="/notifications/redirect/<%= notification._id %>">
-                      <%= notification.sender.username %> commented on your portfolio.
-                    </a>
-                  </li>
-              <% }) %>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-center" href="/notifications">View all</a></li>
-            <% } else { %>
-              <li><a class="dropdown-item" href="#">No new notifications</a></li>
-            <% } %>
-          </ul>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/profile">My Profile</a>

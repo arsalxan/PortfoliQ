@@ -9,6 +9,14 @@ module.exports.isLoggedIn = (req, res, next) => {
   next();
 }
 
+module.exports.isAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect('/');
+  }
+  next();
+}
+
 module.exports.validatePortfolio = [
   body('portfolio.url').isURL().withMessage('Please enter a valid URL.'),
   body('portfolio.description').trim().escape(),

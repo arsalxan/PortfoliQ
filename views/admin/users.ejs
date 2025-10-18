@@ -1,0 +1,64 @@
+<% layout('layouts/main') -%>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Left Sidebar (Icon Menu) -->
+        <div class="col-1 d-none d-md-block sidebar">
+            <div class="d-flex flex-column py-3">
+                <a href="/admin" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Admin Dashboard"><i class="fas fa-shield-halved"></i></a>
+                <a href="/admin/users" class="sidebar-icon active w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Users"><i class="fas fa-users"></i></a>
+                <a href="/admin/portfolios" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Portfolios"><i class="fas fa-briefcase"></i></a>
+                <a href="/admin/feedbacks" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Feedbacks"><i class="fas fa-comments"></i></a>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-11 col-md-11">
+            <div class="row">
+                <div class="col-auto mb-4">
+                    <div class="card p-3 shadow-sm">
+                        <h2 class="mb-0">Manage Users</h2>
+                        <p class="text-muted mb-0">(Search, view, and delete users)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm p-4">
+                <form action="/admin/users" method="GET" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search by username" value="<%= typeof search !== 'undefined' ? search : '' %>">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+                <div class="table-container">
+                    <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Full Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let user of users) { %>
+                                <tr>
+                                    <td><%= user.username %></td>
+                                    <td><%= user.email %></td>
+                                    <td><%= user.fullName %></td>
+                                    <td>
+                                        <form action="/admin/users/<%= user._id %>?_method=DELETE" method="POST">
+                                            <button class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

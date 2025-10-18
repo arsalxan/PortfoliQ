@@ -1,0 +1,81 @@
+<% layout('layouts/main') -%>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Left Sidebar (Icon Menu) -->
+        <div class="col-1 d-none d-md-block sidebar">
+            <div class="d-flex flex-column py-3">
+                <a href="/admin" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Admin Dashboard"><i class="fas fa-shield-halved"></i></a>
+                <a href="/admin/users" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Users"><i class="fas fa-users"></i></a>
+                <a href="/admin/portfolios" class="sidebar-icon w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Portfolios"><i class="fas fa-briefcase"></i></a>
+                <a href="/admin/feedbacks" class="sidebar-icon active w-100 text-center py-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Feedbacks"><i class="fas fa-comments"></i></a>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-11 col-md-11">
+            <div class="row">
+                <div class="col-auto mb-4">
+                    <div class="card p-3 shadow-sm">
+                        <h2 class="mb-0">Manage Feedbacks</h2>
+                        <p class="text-muted mb-0">(Search, view, and delete feedbacks)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm p-4">
+                <form action="/admin/feedbacks" method="GET" class="mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" name="givenBy" class="form-control" placeholder="Given by (username)" value="<%= typeof givenBy !== 'undefined' ? givenBy : '' %>">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" name="content" class="form-control" placeholder="Search by content" value="<%= typeof content !== 'undefined' ? content : '' %>">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-2" type="submit">Search</button>
+                </form>
+                <div class="table-container">
+                    <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Given By</th>
+                                <th>Given To</th>
+                                <th>Content</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let feedback of feedbacks) { %>
+                                <tr>
+                                    <td><%= feedback.user.username %></td>
+                                    <td><%= feedback.portfolio.user.username %></td>
+                                    <td>
+                                        <%
+                                            const content = [];
+                                            if (feedback.design) content.push(`Design: ${feedback.design}`);
+                                            if (feedback.responsiveness) content.push(`Responsiveness: ${feedback.responsiveness}`);
+                                            if (feedback.content) content.push(`Content: ${feedback.content}`);
+                                            if (feedback.ux_flow) content.push(`UX Flow: ${feedback.ux_flow}`);
+                                            if (feedback.accessibility) content.push(`Accessibility: ${feedback.accessibility}`);
+                                            if (feedback.technical_performance) content.push(`Technical Performance: ${feedback.technical_performance}`);
+                                            if (feedback.additional) content.push(`Additional: ${feedback.additional}`);
+                                        %>
+                                        <%= content.join(', ') %>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/feedbacks/<%= feedback._id %>?_method=DELETE" method="POST">
+                                            <button class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -27,7 +27,12 @@ const userSchema = new mongoose.Schema({
     default: false
   },
   emailVerificationToken: String,
-  emailVerificationTokenExpires: Date
+  emailVerificationTokenExpires: Date,
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  }
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'username' });
