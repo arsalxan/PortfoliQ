@@ -3,8 +3,8 @@ const Feedback = require('../models/feedback');
 const Portfolio = require('../models/portfolio');
 const Notification = require('../models/notification');
 const multer = require('multer');
-const { storage } = require('../utils/cloudinaryConfig');
-const upload = multer({ storage });
+const { dpStorage } = require('../utils/cloudinaryConfig');
+const upload = multer({ storage: dpStorage });
 
 module.exports.upload = upload;
 

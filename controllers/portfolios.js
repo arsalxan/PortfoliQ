@@ -3,9 +3,8 @@ const Feedback = require('../models/feedback');
 const { GoogleGenAI } = require('@google/genai');
 const multer = require('multer');
 const { marked } = require('marked');
-const { storage } = require('../utils/cloudinaryConfig');
-const { analyzePortfolio } = require('../utils/portfolioAnalyzer');
-const upload = multer({ storage });
+const { portfolioStorage } = require('../utils/cloudinaryConfig');
+const upload = multer({ storage: portfolioStorage });
 
 module.exports.upload = upload;
 

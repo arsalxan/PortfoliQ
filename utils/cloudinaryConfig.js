@@ -7,12 +7,20 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET
 });
 
-const storage = new CloudinaryStorage({
+const dpStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'PortfolioQue',
+    folder: 'PortfolioQue/dps',
     allowedFormats: ['jpeg', 'png', 'jpg']
   }
 });
 
-module.exports = { cloudinary, storage };
+const portfolioStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'PortfolioQue/portfolios',
+    allowedFormats: ['jpeg', 'png', 'jpg']
+  }
+});
+
+module.exports = { cloudinary, dpStorage, portfolioStorage };
