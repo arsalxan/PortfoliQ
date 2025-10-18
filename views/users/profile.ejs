@@ -31,16 +31,15 @@
                 <div class="col-lg-6">
                     <div class="card h-100 shadow-sm p-4">
                         <h4 class="mb-3 text-primary"><%= user.fullName %>'s Profile</h4>
-                        <div class="d-flex flex-column align-items-center mb-4">
-                            <% if (user.dp) { %>
-                                <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary);">
-                            <% } else { %>
-                                <i class="fas fa-user-circle fa-7x mb-3 text-secondary"></i>
-                            <% } %>
-                            <h3 class="mb-1 text-primary-emphasis"><%= user.fullName %></h3>
-                            <p class="text-muted"><%= user.email %></p>
-                        </div>
-
+                                                <div class="d-flex flex-column align-items-center mb-4">
+                                                    <% if (user.dp) { %>
+                                                        <img src="<%= user.dp %>" alt="Display Picture" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary);">
+                                                    <% } else { %>
+                                                        <i class="fas fa-user-circle fa-7x mb-3 text-secondary"></i>
+                                                    <% } %>
+                                                    <h3 class="mb-1 text-primary-emphasis"><%= user.fullName %></h3>
+                                                    <p class="text-muted"><%= user.email %></p>
+                                                </div>
                         <div class="d-flex justify-content-center gap-3 mb-4">
                             <a href="/profile/myportfolios" class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3 py-2 text-decoration-none text-wrap">
                                 <i class="fas fa-upload me-1"></i> <br>Submissions: <%= userPortfolios.length %>
@@ -93,13 +92,14 @@
                                     <label for="fullName" class="form-label">Full Name</label>
                                     <input type="text" name="fullName" id="fullName" class="form-control" value="<%= user.fullName || '' %>">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
-                                </div>
+
                                 <div class="mb-3">
                                     <label for="password" class="form-label">New Password (leave blank to keep current)</label>
                                     <input type="password" name="password" id="password" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" name="confirmPassword" id="confirmPassword" class="form-control">
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary">Save Changes <i class="fas fa-save ms-2"></i></button>

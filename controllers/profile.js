@@ -54,30 +54,9 @@ module.exports.updateProfile = async (req, res) => {
       return res.redirect('/profile');
     }
 
-    // Update username if provided and unique
-    if (req.body.username && req.body.username !== user.username) {
-      const existingUser = await User.findOne({ username: req.body.username });
-      if (existingUser && existingUser._id.toString() !== user._id.toString()) {
-        req.flash('error', 'Username already taken.');
-        return res.redirect('/profile');
-      }
-      user.username = req.body.username;
-    }
-
-    // Update full name
-    if ('fullName' in req.body) {
-      user.fullName = req.body.fullName;
-    }
-
-    // Update email if provided and unique
-    if (req.body.email && req.body.email !== user.email) {
-      const existingUser = await User.findOne({ email: req.body.email });
-      if (existingUser && existingUser._id.toString() !== user._id.toString()) {
-        req.flash('error', 'Email already taken.');
-        return res.redirect('/profile');
-      }
-      user.email = req.body.email;
-    }
+    // Update user fields
+    user.username = req.body.username || user.username;
+    user.fullName = req.body.fullName || user.fullName;
 
     // Update password if provided
     if (req.body.password) {

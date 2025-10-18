@@ -94,17 +94,29 @@ module.exports.validateUserRegistration = [
 ];
 
 module.exports.validateProfileUpdate = [
-  body('username').trim().notEmpty().withMessage('Username cannot be empty.'),
-  body('fullName').trim().escape(),
-  body('email').isEmail().withMessage('Please enter a valid email address.'),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      for (let error of errors.array()) {
-        req.flash('error', error.msg);
-      }
-      return res.redirect('/profile');
+    body('username')
+        .trim()
+        .isLength({ min: 3 }).withMessage('Username must be at least 3 characters long.')
+        .matches(/^[a-z0-9_]+$/).withMessage('Username can only contain lowercase letters, numbers, and underscores.'),
+    body('fullName').trim().notEmpty().withMessage('Full Name cannot be empty.'),
+    body('password').optional({ checkFalsy: true }) // Make password optional
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
+    .withMessage('Password must contain at least one uppercase letter, one number, and one special character.'),
+    body('confirmPassword').custom((value, { req }) => {
+        if (req.body.password && value !== req.body.password) {
+            throw new Error('Passwords do not match.');
+        }
+        return true;
+    }),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            for (let error of errors.array()) {
+                req.flash('error', error.msg);
+            }
+            return res.redirect('/profile');
+        }
+        next();
     }
-    next();
-  }
 ];
