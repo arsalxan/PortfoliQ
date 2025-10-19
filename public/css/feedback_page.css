@@ -1,0 +1,13 @@
+.feedback-page-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.portfolio-card-container {
+    flex: 1;
+}
+
+.feedbacks-container {
+    flex: 1;
+}

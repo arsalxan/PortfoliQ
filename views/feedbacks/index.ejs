@@ -17,6 +17,9 @@
                 <p class="text-muted"><%= portfolio.description %></p>
             </div>
         </div>
+        <div class="d-grid">
+            <a href="/portfolios/<%= portfolio._id %>/feedbacks/new" class="btn btn-primary">Give Feedback <i class="fas fa-plus ms-1"></i></a>
+        </div>
     </div>
     <div class="feedbacks-container">
         <% if (feedbacks.length) { %>
