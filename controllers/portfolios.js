@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const Portfolio = require('../models/portfolio');
 const Feedback = require('../models/feedback');
 const { GoogleGenAI } = require('@google/genai');
@@ -113,4 +114,31 @@ module.exports.getAiReview = async (req, res) => {
     }
 
     res.render('portfolios/ai_review', { analysis, aiReview, marked });
+};
+
+module.exports.searchPortfolios = async (req, res) => {
+  const { q } = req.query;
+
+  if (!q || q.trim() === "") {
+    return res.render('portfolios/search_results', { portfolios: [], q });
+  }
+
+  const users = await User.find({ username: { $regex: q, $options: 'i' } });
+  const userIds = users.map(user => user._id);
+
+  let portfolios = await Portfolio.find({
+    $or: [
+      { description: { $regex: q, $options: 'i' } },
+      { user: { $in: userIds } }
+    ]
+  }).populate('user');
+
+  portfolios = await Promise.all(portfolios.map(async (portfolio) => {
+    const feedbackCount = await Feedback.countDocuments({ portfolio: portfolio._id });
+    return { ...portfolio.toObject(), feedbackCount };
+  }));
+
+  portfolios.sort((a, b) => a.feedbackCount - b.feedbackCount);
+
+  res.render('portfolios/search_results', { portfolios, q });
 };

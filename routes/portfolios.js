@@ -11,6 +11,8 @@ router.route('/')
 
 router.get('/new', isLoggedIn, portfolios.renderNewForm);
 
+router.get('/search', portfolios.searchPortfolios);
+
 router.route('/:id')
   .put(isLoggedIn, upload.single('screenshot'), validatePortfolio, portfolios.updatePortfolio)
   .delete(isLoggedIn, portfolios.deletePortfolio);

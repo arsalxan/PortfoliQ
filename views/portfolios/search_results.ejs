@@ -2,7 +2,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">All Portfolios</h2>
+        <h2 class="mb-0">Search Results for "<%= q %>"</h2>
         <a href="/portfolios/new" class="btn btn-primary d-flex align-items-center">
             Add New Portfolio <i class="fas fa-plus-circle ms-2"></i>
         </a>
@@ -10,7 +10,7 @@
 
     <div class="mb-4">
         <form class="d-flex" action="/portfolios/search" method="GET" onsubmit="return this.q.value.trim() !== ''">
-            <input class="form-control me-2" type="search" placeholder="Search by description or username" aria-label="Search" name="q">
+            <input class="form-control me-2" type="search" placeholder="Search by description or username" aria-label="Search" name="q" value="<%= q %>">
             <button class="btn btn-primary" type="submit">Search</button>
         </form>
     </div>
@@ -71,12 +71,8 @@
         <% } else { %>
             <div class="col-12">
                 <div class="alert alert-info text-center" role="alert">
-                    <h4 class="alert-heading">No Portfolios Yet!</h4>
-                    <p>It looks like no one has submitted a portfolio. Be the first to share your work!</p>
-                    <hr>
-                    <a href="/portfolios/new" class="btn btn-info">
-                        <i class="fas fa-plus-circle me-2"></i> Add Your First Portfolio
-                    </a>
+                    <h4 class="alert-heading">No Portfolios Found!</h4>
+                    <p>No portfolios matched your search for "<%= q %>".</p>
                 </div>
             </div>
         <% } %>
