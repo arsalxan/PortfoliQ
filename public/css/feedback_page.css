@@ -11,3 +11,9 @@
 .feedbacks-container {
     flex: 1;
 }
+
+@media (max-width: 768px) {
+    .feedback-page-container {
+        flex-direction: column;
+    }
+}

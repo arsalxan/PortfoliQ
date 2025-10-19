@@ -614,8 +614,6 @@ label {
         overflow-y: visible;
         padding-right: 0;
         padding-left: 0;
-        max-height: 40vh;
-        overflow-y: auto;
     }
 
     .feedbacks-container {
