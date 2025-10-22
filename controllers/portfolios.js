@@ -118,17 +118,18 @@ module.exports.getAiReview = async (req, res) => {
 
 module.exports.searchPortfolios = async (req, res) => {
   const { q } = req.query;
+  const searchQuery = q ? q.trim() : "";
 
-  if (!q || q.trim() === "") {
+  if (!searchQuery) {
     return res.render('portfolios/search_results', { portfolios: [], q });
   }
 
-  const users = await User.find({ username: { $regex: q, $options: 'i' } });
+  const users = await User.find({ username: { $regex: searchQuery, $options: 'i' } });
   const userIds = users.map(user => user._id);
 
   let portfolios = await Portfolio.find({
     $or: [
-      { description: { $regex: q, $options: 'i' } },
+      { description: { $regex: searchQuery, $options: 'i' } },
       { user: { $in: userIds } }
     ]
   }).populate('user');

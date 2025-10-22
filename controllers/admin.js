@@ -12,10 +12,11 @@ module.exports.renderDashboard = async (req, res) => {
 
 module.exports.getUsers = async (req, res) => {
     const { search } = req.query;
+    const searchQuery = search ? search.trim() : "";
     let users;
-    if (search) {
+    if (searchQuery) {
         users = await User.find({
-            username: { $regex: search, $options: 'i' },
+            username: { $regex: searchQuery, $options: 'i' },
             _id: { $ne: req.user._id }
         });
     } else {
@@ -36,9 +37,10 @@ module.exports.deleteUser = async (req, res) => {
 
 module.exports.getPortfolios = async (req, res) => {
     const { search } = req.query;
+    const searchQuery = search ? search.trim() : "";
     let portfolios;
-    if (search) {
-        const users = await User.find({ username: { $regex: search, $options: 'i' } });
+    if (searchQuery) {
+        const users = await User.find({ username: { $regex: searchQuery, $options: 'i' } });
         const userIds = users.map(user => user._id);
         portfolios = await Portfolio.find({ user: { $in: userIds } }).populate('user');
     } else {
@@ -55,23 +57,25 @@ module.exports.deletePortfolio = async (req, res) => {
 
 module.exports.getFeedbacks = async (req, res) => {
     const { givenBy, content } = req.query;
+    const givenByQuery = givenBy ? givenBy.trim() : "";
+    const contentQuery = content ? content.trim() : "";
     let query = {};
 
-    if (givenBy) {
-        const users = await User.find({ username: { $regex: givenBy, $options: 'i' } });
+    if (givenByQuery) {
+        const users = await User.find({ username: { $regex: givenByQuery, $options: 'i' } });
         const userIds = users.map(user => user._id);
         query.user = { $in: userIds };
     }
 
-    if (content) {
+    if (contentQuery) {
         query.$or = [
-            { design: { $regex: content, $options: 'i' } },
-            { responsiveness: { $regex: content, $options: 'i' } },
-            { content: { $regex: content, $options: 'i' } },
-            { ux_flow: { $regex: content, $options: 'i' } },
-            { accessibility: { $regex: content, $options: 'i' } },
-            { technical_performance: { $regex: content, $options: 'i' } },
-            { additional: { $regex: content, $options: 'i' } }
+            { design: { $regex: contentQuery, $options: 'i' } },
+            { responsiveness: { $regex: contentQuery, $options: 'i' } },
+            { content: { $regex: contentQuery, $options: 'i' } },
+            { ux_flow: { $regex: contentQuery, $options: 'i' } },
+            { accessibility: { $regex: contentQuery, $options: 'i' } },
+            { technical_performance: { $regex: contentQuery, $options: 'i' } },
+            { additional: { $regex: contentQuery, $options: 'i' } }
         ];
     }
 
