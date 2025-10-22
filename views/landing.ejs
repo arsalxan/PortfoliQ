@@ -7,9 +7,11 @@
             <div class="col-lg-7 hero-content">
                 <h1 class="display-4 fw-bold">Get Real Feedback. Build a Better Portfolio.</h1>
                 <p class="lead">Stop guessing what recruiters want to see. Submit your portfolio and get structured, actionable feedback from a community of developers and designers just like you.</p>
-                <a href="/portfolios" class="btn btn-primary btn-lg me-2">Browse Portfolios <i class="fas fa-arrow-right ms-2"></i></a>
-                <a href="/register" class="btn btn-outline-primary btn-lg me-2">Sign Up</a>
-                <a href="/login" class="btn btn-outline-primary btn-lg">Login</a>
+                <a href="/portfolios" class="btn btn-primary btn-lg me-2 mb-2 mb-lg-0">Browse Portfolios <i class="fas fa-arrow-right ms-2"></i></a>
+                <% if(!currentUser) { %>
+                <a href="/register" class="btn btn-outline-primary btn-lg me-2 mb-2 mb-lg-0">Sign Up</a>
+                <a href="/login" class="btn btn-outline-primary btn-lg mb-2 mb-lg-0">Login</a>
+                <% } %>
             </div>
             <div class="col-lg-5 hero-illustration mt-4 mt-lg-0">
                 <img src="/images/homeimage.svg" alt="Portfolio Feedback Illustration" class="img-fluid">
