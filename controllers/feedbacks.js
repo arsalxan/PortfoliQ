@@ -6,13 +6,18 @@ const Notification = require('../models/notification');
 const genAI = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 module.exports.renderNewForm = async (req, res) => {
-  const portfolio = await Portfolio.findById(req.params.id);
+  const portfolio = await Portfolio.findById(req.params.id).populate('user');
   if (!portfolio) {
     req.flash('error', 'Cannot find that portfolio!');
     return res.redirect('/portfolios');
   }
+  if (portfolio.user.equals(req.user._id)) {
+    req.flash('error', 'You cannot give feedback to your own portfolio!');
+    return res.redirect(`/portfolios/${req.params.id}`);
+  }
   res.render('feedbacks/new', { portfolio });
 };
+
 
 module.exports.index = async (req, res) => {
   const portfolio = await Portfolio.findById(req.params.id).populate('user');

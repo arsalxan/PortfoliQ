@@ -18,7 +18,9 @@
             </div>
         </div>
         <div class="d-grid">
+            <% if (currentUser && portfolio.user && !portfolio.user.equals(currentUser._id)) { %>
             <a href="/portfolios/<%= portfolio._id %>/feedbacks/new" class="btn btn-primary">Give Feedback <i class="fas fa-plus ms-1"></i></a>
+            <% } %>
         </div>
     </div>
     <div class="feedbacks-container">
