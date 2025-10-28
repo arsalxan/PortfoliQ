@@ -40,9 +40,14 @@ module.exports.createPortfolio = async (req, res) => {
 };
 
 module.exports.renderEditForm = async (req, res) => {
-  const portfolio = await Portfolio.findById(req.params.id);
+  const { id } = req.params;
+  const portfolio = await Portfolio.findById(id);
   if (!portfolio) {
     req.flash('error', 'Cannot find that portfolio!');
+    return res.redirect('/portfolios');
+  }
+  if (!portfolio.user.equals(req.user._id)) {
+    req.flash('error', 'You do not have permission to do that!');
     return res.redirect('/portfolios');
   }
   res.render('portfolios/edit', { portfolio });
@@ -50,17 +55,36 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updatePortfolio = async (req, res) => {
   const { id } = req.params;
+  const portfolio = await Portfolio.findById(id);
+  if (!portfolio) {
+    req.flash('error', 'Cannot find that portfolio!');
+    return res.redirect('/portfolios');
+  }
+  if (!portfolio.user.equals(req.user._id)) {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect(`/portfolios/${id}`);
+  }
   const updateData = { ...req.body.portfolio };
   if (req.file) {
     updateData.screenshot = req.file.path;
   }
-  const portfolio = await Portfolio.findByIdAndUpdate(id, updateData, { new: true });
+  const updatedPortfolio = await Portfolio.findByIdAndUpdate(id, updateData, { new: true });
   req.flash('success', 'Successfully updated your portfolio!');
-  res.redirect(`/portfolios/${portfolio._id}/edit`);
+  res.redirect(`/portfolios/${updatedPortfolio._id}/edit`);
 };
 
 module.exports.deletePortfolio = async (req, res) => {
-  await Portfolio.findByIdAndDelete(req.params.id);
+  const { id } = req.params;
+  const portfolio = await Portfolio.findById(id);
+  if (!portfolio) {
+    req.flash('error', 'Cannot find that portfolio!');
+    return res.redirect('/portfolios');
+  }
+  if (!portfolio.user.equals(req.user._id)) {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect('/portfolios');
+  }
+  await Portfolio.findByIdAndDelete(id);
   req.flash('success', 'Successfully deleted your portfolio!');
   res.redirect('/portfolios');
 };

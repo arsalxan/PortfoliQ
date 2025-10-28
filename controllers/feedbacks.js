@@ -65,8 +65,24 @@ module.exports.showFeedback = async (req, res) => {
 
 module.exports.deleteFeedback = async (req, res) => {
   const { id, feedbackId } = req.params;
+  const feedback = await Feedback.findById(feedbackId);
+  const portfolio = await Portfolio.findById(id);
+
+  if (!feedback || !portfolio) {
+    req.flash('error', 'Cannot find the requested content!');
+    return res.redirect('/portfolios');
+  }
+
+  const isFeedbackAuthor = feedback.user.equals(req.user._id);
+  const isPortfolioOwner = portfolio.user.equals(req.user._id);
+
+  if (!isFeedbackAuthor && !isPortfolioOwner) {
+    req.flash('error', 'You do not have permission to do that!');
+    return res.redirect(`/portfolios/${id}/feedbacks`);
+  }
+
   await Feedback.findByIdAndDelete(feedbackId);
-  req.flash('success', 'Successfully deleted your feedback!');
+  req.flash('success', 'Successfully deleted the feedback!');
   res.redirect(`/portfolios/${id}/feedbacks`);
 };
 
