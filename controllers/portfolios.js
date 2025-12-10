@@ -127,7 +127,7 @@ module.exports.getAiReview = async (req, res) => {
     let aiReview = 'No AI review available.';
     try {
         const result = await genAI.models.generateContent({
-          model: 'gemini-2.0-flash-001',
+          model: 'gemini-2.5-flash-lite',
          contents: prompt,
         });
         aiReview = result.text;
